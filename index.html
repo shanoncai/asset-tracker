@@ -49,9 +49,9 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
 .asset tbody td.wx-hi{background:#fff3cd !important;}
 .asset tbody td.wx-gray{background:#e9ecef !important;}
-.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{width:38px !important;min-width:38px !important;max-width:38px !important;padding-left:2px !important;padding-right:2px !important;}
-.asset thead th.col-wx{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.asset td.col-wx .cell-text{width:30px !important;max-width:30px !important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{min-width:38px !important;padding-left:2px !important;padding-right:2px !important;}
+.asset thead th.col-wx{white-space:nowrap;}
+.asset td.col-wx .cell-text{white-space:nowrap;}
 .ver-tag{position:fixed;top:4px;right:6px;z-index:999;font-size:10px;line-height:1;color:#8a94a6;background:rgba(255,255,255,.82);border:1px solid #e2e6ec;border-radius:6px;padding:2px 6px;pointer-events:none;font-variant-numeric:tabular-nums;}
 table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tfoot td:first-child{padding-left:3px !important;padding-right:3px !important;}
 
@@ -69,7 +69,7 @@ table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tf
 
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
-table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:auto;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
 table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:24px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);user-select:none;}
 table.asset thead th.sortable{cursor:pointer;}
 table.asset thead th:hover{background:#e9edf2;}
@@ -92,12 +92,12 @@ td.num{text-align:center;font-weight:550;}
 td.num.zero-q{background:#cdd2d9;color:#5b626b;}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
-.cell-text{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
+.cell-text{display:inline-block;white-space:nowrap;vertical-align:middle;}
 .login{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 6px;margin:-4px -6px;border-radius:6px;}
 .login .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
 .login.on .dot{background:var(--color-success);}
 .login.off .dot{background:var(--color-danger);}
-.code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',monospace;cursor:pointer;max-width:80px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
+.code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',monospace;cursor:pointer;display:inline-block;white-space:nowrap;vertical-align:middle;}
 .code:hover{color:var(--color-primary);text-decoration:underline;}
 .badge{display:inline-flex;align-items:center;height:17px;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;line-height:1;}
 .badge-primary{background:var(--color-primary-soft);color:var(--color-primary);}
@@ -162,7 +162,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v29</div>
+<div class="ver-tag" id="verTag">v30</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -254,7 +254,6 @@ const DEFAULT_COLS=[38,64,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 F
 const COL_KEY='asset_tracker_colw_v1';
 function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
 function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
-function setTableWidth(){const tb=document.querySelector('#tableMount table.asset');if(tb)tb.style.width=(colWidths.reduce((a,b)=>a+b,0)+40)+'px';}
 const colWidths=loadCols();
 colWidths[0]=38; // 微信列最小宽度
 
@@ -303,7 +302,7 @@ function renderTable(){
   const sumBirthday=rows.reduce((s,r)=>s+(Number(r['生日券'])||0),0);
 
   // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
-  const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
+  const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="min-width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
   let head=colgroup+'<thead><tr>'+FIELDS.map((f,i)=>{
     let ind='';
     if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
@@ -324,7 +323,7 @@ function renderTable(){
   // 合计行（仅积分/余额求和，操作列留空）
   let foot='<tfoot><tr>';
   FIELDS.forEach(f=>{
-    if(f.key==='微信')foot+=`<td class="c-left"><span class="cell-text" style="font-weight:600">合计（${rows.length} 行）</span></td>`;
+    if(f.key==='微信')foot+=`<td class="c-left"></td>`;
     else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
@@ -335,7 +334,6 @@ function renderTable(){
   foot+='<td></td></tr></tfoot>';
 
   document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
-  setTableWidth();
   const subEl=document.getElementById('subInfo');
   if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
   applySelection();
@@ -495,7 +493,7 @@ function startResize(e){
     const x=(ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX;
     const w=Math.max(40,Math.round(startW+(x-startX)));
     colWidths[col]=w;
-    if(colEl){colEl.style.width=w+'px';setTableWidth();}
+    if(colEl){colEl.style.minWidth=w+'px';}
     if(ev.cancelable)ev.preventDefault();
   }
   function end(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',end);document.removeEventListener('touchmove',move);document.removeEventListener('touchend',end);saveCols();}
