@@ -39,7 +39,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 /* Worksheet tabs */
 .ws-bar{display:flex;align-items:flex-end;gap:2px;padding:0 4px;border-bottom:1px solid var(--color-border);margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .ws-bar::-webkit-scrollbar{height:0;}
-.ws-tab{height:36px;padding:0 14px;font-size:13px;color:var(--color-gray-700);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.ws-tab{height:36px;padding:0 32px;min-width:130px;font-size:13px;color:var(--color-gray-700);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .ws-tab:hover{background:var(--color-gray-100);}
 .ws-tab.active{background:#fff;color:var(--color-ink);font-weight:600;border-color:var(--color-border);border-bottom:2px solid var(--color-primary);}
 .ws-tab .ws-edit{opacity:0;color:var(--color-gray-400);font-size:11px;cursor:pointer;}
@@ -147,7 +147,7 @@ table.asset tfoot td.num{text-align:center;}
   .modal{max-height:92dvh;padding:16px 16px 20px;}
   .fld input,.fld select{height:38px;}
   .row-edit{width:22px;height:22px;font-size:12px;}
-  .ws-tab,.ws-add{height:42px;font-size:14px;}
+  .ws-tab{height:42px;font-size:14px;padding:0 32px;min-width:130px;} .ws-add{height:42px;font-size:14px;}
   .ws-rename-input{height:24px;font-size:14px;}
 }
 </style>
@@ -162,7 +162,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v32</div>
+<div class="ver-tag" id="verTag">v33</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
