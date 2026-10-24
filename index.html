@@ -49,7 +49,8 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
 .asset tbody td.wx-hi{background:#ffd43b !important;}
 .asset tbody td.wx-gray{background:#ced4da !important;}
-.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{width:100px !important;min-width:100px !important;padding-left:2px !important;padding-right:2px !important;}
+.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{min-width:67px !important;padding-left:2px !important;padding-right:2px !important;}
+.asset thead th.col-login,.asset tbody td.col-login,.asset tfoot td.col-login{min-width:140px !important;padding-left:2px !important;padding-right:2px !important;}
 .asset thead th.col-wx{white-space:nowrap;}
 .asset td.col-wx .cell-text{white-space:nowrap;}
 .ver-tag{position:fixed;top:4px;right:6px;z-index:999;font-size:10px;line-height:1;color:#8a94a6;background:rgba(255,255,255,.82);border:1px solid #e2e6ec;border-radius:6px;padding:2px 6px;pointer-events:none;font-variant-numeric:tabular-nums;}
@@ -162,7 +163,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v38</div>
+<div class="ver-tag" id="verTag">v39</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -250,12 +251,12 @@ function load(){
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
 
 // 列宽（独立持久化，不进数据备份）
-const DEFAULT_COLS=[100,120,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 FIELDS 顺序（含手机号、券码）
+const DEFAULT_COLS=[67,140,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 FIELDS 顺序（含手机号、券码）
 const COL_KEY='asset_tracker_colw_v1';
 function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
 function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
 const colWidths=loadCols();
-colWidths[0]=100; colWidths[1]=120; // 强制微信/登录列宽，覆盖手机旧缓存列宽
+colWidths[0]=67; colWidths[1]=140; // 强制微信/登录列宽，覆盖手机旧缓存列宽
 
 // 表头点击排序：升 → 降 → 取消（三轮）
 function toggleSort(key){
@@ -307,7 +308,7 @@ function renderTable(){
   let head=colgroup+'<thead><tr>'+FIELDS.map((f,i)=>{
     let ind='';
     if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
-    return `<th class="c-${f.align}${f.key==='积分'?' sortable':''}${f.key==='微信'?' col-wx':''}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
+    return `<th class="c-${f.align}${f.key==='积分'?' sortable':''}${f.key==='微信'?' col-wx':''}${f.key==='登录'?' col-login':''}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
   }).join('')+'<th class="c-center" style="cursor:default">操作</th></tr></thead>';
 
   // 表体（data-i 用原始行索引，避免搜索/排序后改错行）
@@ -330,6 +331,7 @@ function renderTable(){
     else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
     else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
+    else if(f.key==='登录')foot+=`<td class="col-login"></td>`;
     else foot+=`<td></td>`;
   });
   foot+='<td></td></tr></tfoot>';
@@ -353,7 +355,7 @@ function cellHtml(f,r,oi){
   if(f.key==='微信'){const bv=r['生日券'];const hi=!(bv===''||bv==null)&&Number(bv)!==0;const gray=r['等级']!=='肚神';const cls=hi?' wx-hi':(gray?' wx-gray':'');const txt=(v===''||v==null)?'':escapeHtml(v);return `<td class="c-center col-wx${cls}" ${attr}><span class="cell-text">${txt}</span></td>`;}
   if(f.key==='登录'){
     const txt=v?escapeHtml(v):'';
-    return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
+    return `<td class="c-center col-login" ${attr}><span class="cell-text">${txt}</span></td>`;
   }
   if(f.type==='num'){
     const n=Number(v)||0;const empty=(v===''||v==null);
