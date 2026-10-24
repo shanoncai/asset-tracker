@@ -74,7 +74,7 @@ td.num{text-align:center;font-weight:550;}
 .cell-editor:focus{outline:none;box-shadow:0 0 0 2px rgba(99,91,255,.25);}
 .cell-editor[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .cell-editor[type=number]::-webkit-inner-spin-button,.cell-editor[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;}
-td.zero{color:var(--color-gray-400);}
+td.num.zero{background:var(--color-gray-100);color:var(--color-gray-400);}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
 .cell-text{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
@@ -315,17 +315,19 @@ function cellHtml(f,r,oi){
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
   }
   if(f.type==='num'){
-    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
-    return `<td class="num ${blank?'zero':''}" ${attr}>${blank?'':n}</td>`;
+    const n=Number(v)||0;const empty=(v===''||v==null);
+    const cls=empty?'num':(n===0?'num zero':'num');
+    return `<td class="${cls}" ${attr}>${empty?'':n}</td>`;
   }
   if(f.type==='points'){
-    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
-    const cls=blank?'num':(n>=3000?'num points-high':'num');
-    return `<td class="${cls}" ${attr}>${blank?'':n}</td>`;
+    const n=Number(v)||0;const empty=(v===''||v==null);
+    let cls=empty?'num':(n===0?'num zero':(n>=3000?'num points-high':'num'));
+    return `<td class="${cls}" ${attr}>${empty?'':n}</td>`;
   }
   if(f.type==='money'){
-    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
-    return `<td class="num" ${attr}>${blank?'':'¥'+fmtMoney(v)}</td>`;
+    const n=Number(v)||0;const empty=(v===''||v==null);
+    const cls=empty?'num':(n===0?'num zero':'num');
+    return `<td class="${cls}" ${attr}>${empty?'':'¥'+fmtMoney(v)}</td>`;
   }
   if(f.type==='code'){
     const txt=(v===''||v==null)?'—':v;
@@ -477,9 +479,9 @@ function fallbackCopy(t){
 
 // ---- Monthly auto-clear for 排队券 ----
 function doClear(){
-  state.worksheets.forEach(w=>w.rows.forEach(r=>r['排队券']=0));
+  state.worksheets.forEach(w=>w.rows.forEach(r=>r['排队券']=3));
   state.lastClearMonth=monthKey(new Date());save();renderTable();
-  toast('排队券已于每月 1 日 03:00 自动清零');
+  toast('排队券已于每月 1 日 03:00 重置为 3');
 }
 function checkClearOnLoad(){
   const now=new Date();
