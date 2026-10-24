@@ -498,7 +498,6 @@ document.getElementById('btnSave').addEventListener('click',()=>{
   FIELDS.forEach(f=>{vals[f.key]=readVal(f);});
   ['排队券','85券','积分','成长值','生日券','余额'].forEach(k=>{const t=document.getElementById('f_'+k).value.trim();vals[k]=t===''?'':(k==='余额'?Math.round(Number(t)||0):(Number(t)||0));});
   snapshot();
-  syncQueue(vals);
   if(modalMode==='add')activeWs().rows.push(vals);
   else activeWs().rows[modalIndex]=vals;
   closeModal();save();renderTable();
@@ -564,7 +563,6 @@ function importData(file){
       if(!o.lastClearMonth)o.lastClearMonth=monthKey(new Date());
       if(!o.activeWsId||!o.worksheets.find(w=>w.id===o.activeWsId))o.activeWsId=o.worksheets[0].id;
       state=o;
-      state.worksheets.forEach(w=>w.rows.forEach(r=>syncQueue(r)));
       save();renderTabs();renderTable();
       toast('已恢复 '+o.worksheets.length+' 个工作表');
     }catch(e){toast('解析失败：不是有效备份');}
@@ -577,8 +575,6 @@ document.getElementById('fileInput').addEventListener('change',e=>{const f=e.tar
 
 // ---- Init ----
 checkClearOnLoad();
-state.worksheets.forEach(w=>w.rows.forEach(r=>syncQueue(r)));
-save();
 scheduleClear();
 renderTabs();
 renderTable();
