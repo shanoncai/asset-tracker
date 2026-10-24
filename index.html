@@ -74,7 +74,7 @@ td.num{text-align:center;font-weight:550;}
 .cell-editor:focus{outline:none;box-shadow:0 0 0 2px rgba(99,91,255,.25);}
 .cell-editor[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .cell-editor[type=number]::-webkit-inner-spin-button,.cell-editor[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;}
-td.num.zero-q{background:var(--color-gray-100);color:var(--color-gray-400);}
+td.num.zero-q{background:#cdd2d9;color:#5b626b;}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
 .cell-text{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
@@ -273,6 +273,7 @@ function renderTable(){
   }
   const sumPoints=rows.reduce((s,r)=>s+(Number(r['积分'])||0),0);
   const sumBal=rows.reduce((s,r)=>s+(Number(r['余额'])||0),0);
+  const sumQueue=rows.reduce((s,r)=>s+(Number(r['排队券'])||0),0);
 
   // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
   const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
@@ -297,6 +298,7 @@ function renderTable(){
   let foot='<tfoot><tr>';
   FIELDS.forEach(f=>{
     if(f.key==='微信')foot+=`<td class="c-left"><span class="cell-text" style="font-weight:600">合计（${rows.length} 行）</span></td>`;
+    else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
