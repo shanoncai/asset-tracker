@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+<title>虚拟资产账号追踪</title>
+<style>
+:root{
+  --color-primary:#635bff; --color-primary-hover:#523bff; --color-primary-soft:#efeefe;
+  --color-brand-dark:#0a2540; --color-ink:#1a1f36; --color-ink-subtle:#425466;
+  --color-accent:#0073e6; --color-focus:#635bff;
+  --color-gray-900:#1a1f36; --color-gray-700:#425466; --color-gray-500:#697386;
+  --color-gray-400:#8792a2; --color-gray-300:#a3accb; --color-gray-200:#e6e8eb;
+  --color-gray-100:#f3f5f7; --color-gray-50:#fafbfc;
+  --color-surface:#ffffff; --color-surface-sunken:#f7f9fb;
+  --color-border:#e6e8eb; --color-border-strong:#cdd2dc;
+  --color-success:#1aae6f; --color-warning:#f5a623; --color-danger:#e25950;
+  --color-info:#635bff;
+  --color-points-high-bg:#c7edcc; --color-points-high-text:#2e7d4f;
+  --shadow-sm:0 1px 2px rgba(10,37,64,.08); --shadow-md:0 4px 12px rgba(10,37,64,.12);
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--color-ink);background:var(--color-gray-50);-webkit-text-size-adjust:100%;}
+.container{max-width:1600px;margin:0 auto;padding:16px 16px 24px;}
+
+/* Header */
+.page-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
+.page-head h1{font-size:20px;font-weight:650;margin:0;color:var(--color-brand-dark);letter-spacing:-.3px;}
+.page-head .sub{font-size:12px;color:var(--color-gray-500);}
+
+/* Worksheet tabs */
+.ws-bar{display:flex;align-items:flex-end;gap:2px;padding:0 4px;border-bottom:1px solid var(--color-border);margin-bottom:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.ws-bar::-webkit-scrollbar{height:0;}
+.ws-tab{height:30px;padding:0 12px;font-size:12.5px;color:var(--color-gray-700);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
+.ws-tab:hover{background:var(--color-gray-100);}
+.ws-tab.active{background:#fff;color:var(--color-ink);font-weight:600;border-color:var(--color-border);border-bottom:2px solid var(--color-primary);}
+.ws-tab .ws-edit{opacity:0;color:var(--color-gray-400);font-size:11px;cursor:pointer;}
+.ws-tab:hover .ws-edit,.ws-tab.active .ws-edit{opacity:1;}
+.ws-add{height:30px;padding:0 10px;background:transparent;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;white-space:nowrap;}
+.ws-add:hover{color:var(--color-primary-hover);}
+
+/* Action bar (bottom) */
+.action-bar{display:flex;align-items:center;gap:10px;height:auto;padding:12px 12px 4px;margin-top:12px;flex-wrap:wrap;}
+.action-bar .spacer{flex:1;}
+.input{height:30px;padding:0 10px;font-size:12.5px;border-radius:7px;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-ink);font-family:inherit;}
+.input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 3px rgba(99,91,255,.18);}
+.input::placeholder{color:var(--color-gray-500);}
+.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:7px;font-size:12.5px;font-weight:550;border:1px solid transparent;cursor:pointer;transition:.12s;font-family:inherit;}
+.btn-primary{background:var(--color-primary);color:#fff;}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-secondary{background:#fff;color:var(--color-ink);border-color:var(--color-border-strong);}
+.btn-secondary:hover{background:var(--color-gray-100);}
+
+/* Table */
+.table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
+table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;}
+table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:34px;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);cursor:pointer;user-select:none;}
+table.asset thead th:hover{background:#e9edf2;}
+table.asset thead th .sort-ind{color:var(--color-primary);margin-left:3px;font-size:10px;}
+table.asset thead th .resizer{position:absolute;right:0;top:0;height:100%;width:8px;cursor:col-resize;z-index:4;touch-action:none;}
+table.asset thead th .resizer:hover{background:var(--color-primary);opacity:.25;}
+table.asset tbody td{padding:0 5px;height:34px;white-space:nowrap;border-bottom:1px solid var(--color-border);color:var(--color-ink);}
+table.asset tbody tr:nth-child(even){background:var(--color-gray-50);}
+table.asset tbody tr:hover{background:var(--color-primary-soft);}
+table.asset tbody tr{cursor:default;}
+.c-left{text-align:center;} .c-center{text-align:center;} .c-right{text-align:center;}
+td.num{text-align:center;font-weight:550;}
+.cell-editor{width:100%;box-sizing:border-box;font-size:16px;font-family:inherit;padding:2px 4px;border:1px solid var(--color-primary);border-radius:4px;background:#fff;color:var(--color-ink);text-align:center;}
+.cell-editor:focus{outline:none;box-shadow:0 0 0 2px rgba(99,91,255,.25);}
+td.zero{color:var(--color-gray-400);}
+td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
+td.warn{color:var(--color-warning);font-weight:600;}
+.cell-text{display:inline-block;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
+.login{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 6px;margin:-4px -6px;border-radius:6px;}
+.login .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+.login.on .dot{background:var(--color-success);}
+.login.off .dot{background:var(--color-danger);}
+.code{font-family:'SFMono-Regular',Consolas,'Liberation Mono',monospace;cursor:pointer;max-width:80px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
+.code:hover{color:var(--color-primary);text-decoration:underline;}
+.badge{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:600;line-height:1;}
+.badge-primary{background:var(--color-primary-soft);color:var(--color-primary);}
+.badge-success{background:#e3f8ef;color:var(--color-success);}
+.badge-neutral{background:var(--color-gray-100);color:var(--color-gray-700);}
+.badge-danger{background:#fdeceb;color:var(--color-danger);}
+table.asset tfoot td{height:34px;padding:0 5px;font-weight:600;border-top:2px solid var(--color-border-strong);background:var(--color-gray-100);color:var(--color-ink);}
+table.asset tfoot td.num{text-align:center;}
+/* 操作列（编辑按钮） */
+.row-edit{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-gray-700);font-size:13px;cursor:pointer;line-height:1;}
+.row-edit:hover{background:var(--color-primary-soft);color:var(--color-primary);border-color:var(--color-primary);}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,37,64,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:12px;}
+.modal-overlay.open{display:flex;}
+.modal{width:460px;max-width:94vw;max-height:90vh;overflow:auto;-webkit-overflow-scrolling:touch;background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 12px 40px var(--shadow-md);animation:modal-in .16s ease;}
+@keyframes modal-in{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;}}
+.modal h3{margin:0 0 14px;font-size:15px;font-weight:650;color:var(--color-brand-dark);}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.fld span{font-size:11.5px;color:var(--color-gray-700);font-weight:600;}
+.fld input,.fld select{height:30px;padding:0 9px;font-size:12.5px;border-radius:7px;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-ink);font-family:inherit;}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 3px rgba(99,91,255,.18);}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--color-brand-dark);color:#fff;padding:8px 16px;border-radius:8px;font-size:12.5px;z-index:80;opacity:0;transition:.2s;pointer-events:none;bottom:calc(20px + env(safe-area-inset-bottom));}
+.toast.show{opacity:1;}
+
+/* ===== 移动端（手机 / iOS Safari）适配 ===== */
+@media (max-width:640px){
+  .container{padding:10px 8px 16px;}
+  .page-head{margin-bottom:8px;}
+  .page-head h1{font-size:17px;}
+  /* 底部操作栏：按钮占满宽度 */
+  .action-bar{margin-top:8px;gap:8px;padding:8px 4px 4px;}
+  .action-bar .spacer{flex-basis:100%;height:0;margin:0;}
+  .btn{height:36px;flex:1;justify-content:center;}
+  /* 表格：强制最小宽度 → 横向滚动，不挤压不变卡片 */
+  .table-wrap{max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);}
+  table.asset{min-width:720px;}
+  table.asset thead th{height:36px;font-size:12.5px;padding:0 5px;}
+  table.asset tbody td{height:36px;padding:0 5px;}
+  /* 输入框 16px，防止 iOS 聚焦时整页放大 */
+  .input,.fld input,.fld select{font-size:16px;height:38px;}
+  .modal{max-height:92dvh;padding:16px 16px 20px;}
+  .fld input,.fld select{height:38px;}
+  .row-edit{width:30px;height:30px;}
+}
+.pwa-hint{display:flex;align-items:center;gap:8px;background:var(--color-primary-soft);color:var(--color-primary);border:1px solid var(--color-primary);border-radius:8px;padding:8px 12px;font-size:12.5px;margin-bottom:10px;line-height:1.4;}
+.pwa-hint button{margin-left:auto;background:var(--color-primary);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.pwa-hint.hide{display:none;}
+</style>
+
+<!-- PWA / iOS standalone (添加到主屏幕当 App 用) -->
+<meta name="theme-color" content="#635bff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="资产追踪">
+<link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIuiZmuaLn+i1hOS6p+i0puWPt+i/vei4qiIsCiAgInNob3J0X25hbWUiOiAi6LWE5Lqn6L+96LiqIiwKICAiZGVzY3JpcHRpb24iOiAi5aSa5Lya5ZGY5Y+36Jma5ouf6LWE5Lqn77yI56ev5YiGIC8g5Yi456CBIC8g5L2Z6aKd77yJ5a6e5pe26L+96Liq6Z2i5p2/IiwKICAic3RhcnRfdXJsIjogIi4iLAogICJzY29wZSI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAib3JpZW50YXRpb24iOiAiYW55IiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmFmYmZjIiwKICAidGhlbWVfY29sb3IiOiAiIzYzNWJmZiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImljb24ucG5nIiwKICAgICAgInNpemVzIjogIjE4MHgxODAiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9Cg==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
+</head>
+<body>
+<div class="container">
+  <div id="pwaHint" class="pwa-hint hide">
+    📱 在 iPhone 上：点 Safari 底部「分享」→「添加到主屏幕」，即可像 App 一样全屏打开本页。
+    <button id="pwaHintClose" type="button">知道了</button>
+  </div>
+  <div class="page-head">
+    <h1>虚拟资产账号追踪</h1>
+    <span class="sub" id="subInfo"></span>
+  </div>
+  <div class="ws-bar" id="tabs"></div>
+  <div class="table-wrap" id="tableMount"></div>
+  <div class="action-bar">
+    <button class="btn btn-secondary" id="btnRefresh">刷新</button>
+    <div class="spacer"></div>
+    <button class="btn btn-secondary" id="btnImport">导入</button>
+    <button class="btn btn-secondary" id="btnExport">导出</button>
+    <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
+    <input type="file" id="fileInput" accept="application/json,.json" style="display:none">
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">录入账号</h3>
+    <div class="modal-grid" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="btnCancel">取消</button>
+      <button class="btn btn-primary" id="btnSave">保存</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY='asset_tracker_v1';
+const FIELDS=[
+  {key:'微信',label:'微信',type:'text',align:'left'},
+  {key:'登录',label:'登录',type:'status',align:'center'},
+  {key:'排队券',label:'排队券',type:'num',align:'right'},
+  {key:'85券',label:'85券',type:'num',align:'right'},
+  {key:'积分',label:'积分',type:'points',align:'right'},
+  {key:'买单',label:'买单',type:'num',align:'right'},
+  {key:'余额',label:'余额',type:'money',align:'right'},
+  {key:'生日',label:'生日',type:'text',align:'center'},
+  {key:'保级日',label:'保级日',type:'date',align:'center'},
+  {key:'成长值',label:'成长值',type:'num',align:'right'},
+  {key:'等级',label:'等级',type:'badge',align:'center'},
+  {key:'主副卡',label:'主副卡',type:'badge',align:'center'},
+  {key:'券码',label:'券码',type:'code',align:'left'},
+];
+
+let state=load()||defaultState();
+
+function uid(){return 'ws'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function monthKey(d){return d.getFullYear()+'-'+(d.getMonth()+1);}
+function activeWs(){return state.worksheets.find(w=>w.id===state.activeWsId)||state.worksheets[0];}
+function blankRow(){return {微信:'',登录:'',排队券:0,'85券':0,券码:'',积分:0,买单:0,余额:0,生日:'',保级日:'',成长值:0,等级:'',主副卡:'副卡'};}
+
+function defaultState(){
+  const ws1={id:uid(),name:'会员主表',sort:{key:null,dir:null},rows:[
+    {微信:'小鱼',登录:'已登录',排队券:2,'85券':1,券码:'DQ2026-8X',积分:3200,买单:3,余额:159,生日:'08-15',保级日:'2026-11-02',成长值:6800,等级:'V6',主副卡:'主卡'},
+    {微信:'阿强',登录:'未登录',排队券:0,'85券':0,券码:'',积分:1200,买单:0,余额:0,生日:'03-21',保级日:'2026-12-30',成长值:2100,等级:'V3',主副卡:'副卡'},
+    {微信:'丽丽',登录:'已登录',排队券:5,'85券':3,券码:'VIP88-22',积分:4500,买单:1,余额:899,生日:'12-01',保级日:'2026-10-30',成长值:9100,等级:'V8',主副卡:'主卡'},
+    {微信:'老王',登录:'未登录',排队券:1,'85券':0,券码:'',积分:2800,买单:2,余额:42,生日:'06-06',保级日:'2027-01-15',成长值:3300,等级:'V4',主副卡:'副卡'},
+  ]};
+  const ws2={id:uid(),name:'副卡表',sort:{key:null,dir:null},rows:[
+    {微信:'小美',登录:'已登录',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:0,余额:66,生日:'09-09',保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
+    {微信:'大壮',登录:'未登录',排队券:0,'85券':1,券码:'',积分:3100,买单:4,余额:0,生日:'01-05',保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
+  ]};
+  return {worksheets:[ws1,ws2],activeWsId:ws1.id,lastClearMonth:monthKey(new Date())};
+}
+
+function load(){
+  try{const s=localStorage.getItem(STORAGE_KEY);if(!s)return null;const o=JSON.parse(s);
+    if(!o.worksheets||!o.worksheets.length)return null;
+    if(!o.lastClearMonth)o.lastClearMonth=monthKey(new Date());
+    return o;}catch(e){return null;}
+}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
+
+// 列宽（独立持久化，不进数据备份）
+const DEFAULT_COLS=[90,64,56,50,56,50,78,66,92,62,50,58,110]; // 对应 FIELDS 顺序
+const COL_KEY='asset_tracker_colw_v1';
+function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
+function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
+const colWidths=loadCols();
+
+// 表头点击排序：升 → 降 → 取消（三轮）
+function toggleSort(key){
+  const ws=activeWs();
+  if(ws.sort.key===key){ if(ws.sort.dir==='asc')ws.sort.dir='desc'; else if(ws.sort.dir==='desc'){ws.sort.key=null;ws.sort.dir=null;} }
+  else { ws.sort.key=key; ws.sort.dir='asc'; }
+  save();renderTable();
+}
+
+function escapeHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmtMoney(n){return Math.round(Number(n)||0).toString();}
+function daysUntil(s){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return null;
+  const d=new Date(s+'T00:00:00');if(isNaN(d))return null;
+  const t=new Date();const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+  return Math.round((d-today)/86400000);
+}
+function sortType(f){return (f.type==='num'||f.type==='points'||f.type==='money')?'num':'text';}
+
+// ---- Render ----
+function renderTabs(){
+  const el=document.getElementById('tabs');let h='';
+  state.worksheets.forEach(w=>{
+    const active=w.id===state.activeWsId?' active':'';
+    h+=`<div class="ws-tab${active}" data-id="${w.id}">${escapeHtml(w.name)}<span class="ws-edit" data-act="rename" data-id="${w.id}">✎</span><span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
+  });
+  h+=`<button class="ws-add" data-act="add">+ 新建工作表</button>`;
+  el.innerHTML=h;
+}
+
+function renderTable(){
+  const ws=activeWs();
+  let rows=ws.rows.slice();
+  if(ws.sort.key){
+    const type=sortType(FIELDS.find(f=>f.key===ws.sort.key));
+    const dir=ws.sort.dir==='asc'?1:-1;
+    rows=rows.slice().sort((a,b)=>{let x=a[ws.sort.key],y=b[ws.sort.key];
+      if(type==='num'){return ((Number(x)||0)-(Number(y)||0))*dir;}
+      x=x==null?'':String(x);y=y==null?'':String(y);return x.localeCompare(y,'zh')*dir;});
+  }
+  const sumPoints=rows.reduce((s,r)=>s+(Number(r['积分'])||0),0);
+  const sumBal=rows.reduce((s,r)=>s+(Number(r['余额'])||0),0);
+
+  // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
+  const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
+  let head=colgroup+'<thead><tr>'+FIELDS.map((f,i)=>{
+    let ind='';
+    if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
+    return `<th class="c-${f.align}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
+  }).join('')+'<th class="c-center" style="cursor:default">操作</th></tr></thead>';
+
+  // 表体（data-i 用原始行索引，避免搜索/排序后改错行）
+  let body='<tbody>';
+  rows.forEach(r=>{
+    const oi=ws.rows.indexOf(r);
+    body+='<tr data-i="'+oi+'">';
+    FIELDS.forEach(f=>{body+=cellHtml(f,r,oi);});
+    body+=`<td class="c-center"><button class="row-edit" data-act="edit" data-i="${oi}" title="编辑">✎</button></td>`;
+    body+='</tr>';
+  });
+  body+='</tbody>';
+
+  // 合计行（仅积分/余额求和，操作列留空）
+  let foot='<tfoot><tr>';
+  FIELDS.forEach(f=>{
+    if(f.key==='微信')foot+=`<td class="c-left"><span class="cell-text" style="font-weight:600">合计（${rows.length} 行）</span></td>`;
+    else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
+    else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
+    else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
+    else foot+=`<td></td>`;
+  });
+  foot+='<td></td></tr></tfoot>';
+
+  document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
+  document.getElementById('subInfo').textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
+}
+
+function cellHtml(f,r,oi){
+  const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}"`;
+  if(f.type==='status'){
+    const on=v==='已登录';
+    const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
+    return `<td class="c-center" ${attr}><span class="login ${on?'on':'off'}"><i class="dot"></i>${txt}</span></td>`;
+  }
+  if(f.type==='num'){
+    const n=Number(v)||0;const zero=(v===''||v==null||n===0);
+    return `<td class="num ${zero?'zero':''}" ${attr}>${n}</td>`;
+  }
+  if(f.type==='points'){
+    const n=Number(v)||0;const cls=n>=3000?'num points-high':'num';
+    return `<td class="${cls}" ${attr}>${n}</td>`;
+  }
+  if(f.type==='money'){
+    return `<td class="num" ${attr}>¥${fmtMoney(v)}</td>`;
+  }
+  if(f.type==='code'){
+    const txt=(v===''||v==null)?'—':v;
+    return `<td class="c-left" ${attr}><span class="code" title="点击就地编辑券码">${escapeHtml(txt)}</span></td>`;
+  }
+  if(f.type==='date'){
+    let cls='c-center';const d=daysUntil(v);if(d!==null&&d<=14)cls+=' warn';
+    return `<td class="${cls}" ${attr}>${escapeHtml(v||'')}</td>`;
+  }
+  if(f.type==='badge'){
+    let bcls='badge-primary';
+    if(f.key==='主副卡')bcls=v==='主卡'?'badge-success':'badge-neutral';
+    return `<td class="c-center" ${attr}><span class="badge ${bcls}">${escapeHtml(v||'')}</span></td>`;
+  }
+  return `<td class="c-left" ${attr}><span class="cell-text">${escapeHtml(v||'')}</span></td>`;
+}
+
+// ---- 单击单元格就地编辑（只改这一格） ----
+function startCellEdit(td,i,key){
+  const ws=activeWs();const r=ws.rows[i];const f=FIELDS.find(x=>x.key===key);const val=r[key];
+  let editor='';
+  if(f.type==='status'||f.key==='主副卡'){
+    const opts=f.type==='status'?['','已登录','未登录']:['主卡','副卡'];
+    editor='<select class="cell-editor">'+opts.map(o=>`<option value="${o}" ${String(val)===o?'selected':''}>${o||'（未填）'}</option>`).join('')+'</select>';
+  }else{
+    const type=(f.type==='num'||f.type==='points'||f.type==='money')?'number':'text';
+    const step='step="1"';
+    const ph=f.key==='生日'?'MM-DD':(f.key==='保级日'?'YYYY-MM-DD':'');
+    editor=`<input class="cell-editor" type="${type}" ${step} value="${escapeHtml(String(val==null?'':val))}" placeholder="${ph}">`;
+  }
+  td.innerHTML=editor;
+  const el=td.firstElementChild;el.focus();if(el.select)el.select();
+  let done=false;
+  const finish=(saveIt)=>{if(done)return;done=true;
+    if(saveIt){
+      if(f.type==='money'){r[key]=el.value===''?0:Math.round(Number(el.value)||0);}
+      else if(f.type==='num'||f.type==='points'){r[key]=el.value===''?'':(Number(el.value)||0);}
+      else r[key]=el.value;
+      save();
+    }
+    renderTable();
+  };
+  el.addEventListener('blur',()=>finish(true));
+  el.addEventListener('keydown',ev=>{
+    if(ev.key==='Enter'){ev.preventDefault();finish(true);}
+    else if(ev.key==='Escape'){ev.preventDefault();finish(false);}
+  });
+  if(el.tagName==='SELECT')el.addEventListener('change',()=>finish(true));
+}
+
+// ---- Events ----
+document.getElementById('tabs').addEventListener('click',e=>{
+  const act=e.target.dataset.act;const id=e.target.dataset.id;
+  if(act==='add'){state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
+  if(act==='rename'){const w=state.worksheets.find(x=>x.id===id);const n=prompt('重命名工作表',w.name);if(n&&n.trim()){w.name=n.trim();save();renderTabs();renderTable();}return;}
+  if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;
+    state.worksheets=state.worksheets.filter(x=>x.id!==id);if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;save();renderTabs();renderTable();return;}
+  const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
+});
+
+document.getElementById('btnRefresh').addEventListener('click',()=>{checkClearOnLoad();renderTable();toast('已刷新');});
+document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-1));
+
+document.getElementById('tableMount').addEventListener('click',e=>{
+  const th=e.target.closest('th[data-key]');
+  if(th && !e.target.closest('.resizer')){ toggleSort(th.dataset.key); return; }
+  const cell=e.target.closest('td[data-key]');
+  if(cell && !e.target.closest('.cell-editor')){
+    const i=+cell.dataset.i;const key=cell.dataset.key;
+    if(i<0||i>=activeWs().rows.length)return;
+    startCellEdit(cell,i,key);return;
+  }
+  const editBtn=e.target.closest('[data-act="edit"]');
+  if(editBtn){const i=+editBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;openModal('edit',i);return;}
+});
+document.getElementById('tableMount').addEventListener('dblclick',e=>{
+  const tr=e.target.closest('tr');if(!tr||tr.parentElement.tagName!=='TBODY')return;
+  const i=+tr.dataset.i;if(i<0||i>=activeWs().rows.length)return;
+  openModal('edit',i);
+});
+
+// ---- 列宽拖拽（鼠标 + 触屏） ----
+function startResize(e){
+  const rz=e.target.closest('.resizer');if(!rz)return;
+  e.preventDefault();e.stopPropagation();
+  const col=+rz.dataset.col;
+  const startX=(e.touches&&e.touches[0])?e.touches[0].clientX:e.clientX;
+  const startW=colWidths[col];
+  const colEl=document.querySelectorAll('table.asset col')[col];
+  function move(ev){
+    const x=(ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX;
+    const w=Math.max(40,Math.round(startW+(x-startX)));
+    colWidths[col]=w;
+    if(colEl)colEl.style.width=w+'px';
+    if(ev.cancelable)ev.preventDefault();
+  }
+  function end(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',end);document.removeEventListener('touchmove',move);document.removeEventListener('touchend',end);saveCols();}
+  document.addEventListener('mousemove',move);
+  document.addEventListener('mouseup',end);
+  document.addEventListener('touchmove',move,{passive:false});
+  document.addEventListener('touchend',end);
+}
+const tableMountEl=document.getElementById('tableMount');
+tableMountEl.addEventListener('mousedown',startResize);
+tableMountEl.addEventListener('touchstart',startResize,{passive:false});
+
+// ---- Modal ----
+let modalMode='add',modalIndex=-1;
+function fieldInput(f,val){
+  const id='f_'+f.key;
+  if(f.key==='登录'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option value="" ${val===''?'selected':''}>（未填）</option><option value="已登录" ${val==='已登录'?'selected':''}>已登录</option><option value="未登录" ${val==='未登录'?'selected':''}>未登录</option></select></label>`;}
+  if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option ${val==='主卡'?'selected':''}>主卡</option><option ${val!=='主卡'?'selected':''}>副卡</option></select></label>`;}
+  const type=(f.type==='num'||f.type==='points'||f.type==='money')?'number':'text';
+  const step='step="1"';
+  const ph=f.key==='生日'?'MM-DD':(f.key==='保级日'?'YYYY-MM-DD':'');
+  return `<label class="fld"><span>${f.label}</span><input id="${id}" type="${type}" inputmode="${type==='number'?'decimal':'text'}" ${step} value="${escapeHtml(val==null?'':val)}" placeholder="${ph}"></label>`;
+}
+function openModal(mode,index){
+  modalMode=mode;modalIndex=index;
+  const row=mode==='edit'?{...activeWs().rows[index]}:blankRow();
+  document.getElementById('modalTitle').textContent=mode==='edit'?'编辑账号':'新增账号';
+  document.getElementById('modalBody').innerHTML=FIELDS.map(f=>fieldInput(f,row[f.key])).join('');
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function readVal(f){return document.getElementById('f_'+f.key).value;}
+document.getElementById('btnCancel').addEventListener('click',closeModal);
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+document.getElementById('btnSave').addEventListener('click',()=>{
+  const vals={};
+  FIELDS.forEach(f=>{vals[f.key]=readVal(f);});
+  ['排队券','85券','积分','买单','成长值'].forEach(k=>vals[k]=Number(vals[k])||0);
+  vals['余额']=Math.round(Number(vals['余额'])||0);
+  if(modalMode==='add')activeWs().rows.push(vals);
+  else activeWs().rows[modalIndex]=vals;
+  closeModal();save();renderTable();
+});
+
+// ---- 复制（iOS file:// 降级） ----
+function copyText(t){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t));
+  }else fallbackCopy(t);
+}
+function fallbackCopy(t){
+  const ta=document.createElement('textarea');
+  ta.value=t;ta.style.position='fixed';ta.style.top='0';ta.style.left='0';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+
+// ---- Monthly auto-clear for 排队券 ----
+function doClear(){
+  state.worksheets.forEach(w=>w.rows.forEach(r=>r['排队券']=0));
+  state.lastClearMonth=monthKey(new Date());save();renderTable();
+  toast('排队券已于每月 1 日 03:00 自动清零');
+}
+function checkClearOnLoad(){
+  const now=new Date();
+  const first3=new Date(now.getFullYear(),now.getMonth(),1,3,0,0,0);
+  const mk=monthKey(now);
+  if(state.lastClearMonth!==mk&&now>=first3){doClear();}
+}
+function scheduleClear(){
+  const now=new Date();
+  const next=new Date(now.getFullYear(),now.getMonth()+1,1,3,0,0,0);
+  setTimeout(()=>{doClear();scheduleClear();},next-now);
+}
+
+// ---- Toast ----
+let toastTimer=null;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1800);}
+
+// ---- 备份导入 / 导出 ----
+// 导出：整库 state（所有工作表 + 上次清零月份）存为 JSON 文件
+function exportData(){
+  const data=JSON.stringify(state,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const d=new Date();const p=n=>String(n).padStart(2,'0');
+  a.href=url;a.download='资产追踪备份_'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('已导出备份文件');
+}
+// 导入：读取 JSON → 校验结构 → 覆盖当前 state 并重渲染
+function importData(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const o=JSON.parse(reader.result);
+      if(!o.worksheets||!Array.isArray(o.worksheets)||!o.worksheets.length){toast('备份文件格式不正确');return;}
+      o.worksheets.forEach(w=>{if(!Array.isArray(w.rows))w.rows=[];if(!w.sort)w.sort={key:null,dir:null};if(!w.id)w.id=uid();if(!w.name)w.name='导入表';});
+      if(!o.lastClearMonth)o.lastClearMonth=monthKey(new Date());
+      if(!o.activeWsId||!o.worksheets.find(w=>w.id===o.activeWsId))o.activeWsId=o.worksheets[0].id;
+      state=o;save();renderTabs();renderTable();
+      toast('已恢复 '+o.worksheets.length+' 个工作表');
+    }catch(e){toast('解析失败：不是有效备份');}
+  };
+  reader.readAsText(file);
+}
+document.getElementById('btnExport').addEventListener('click',exportData);
+document.getElementById('btnImport').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)importData(f);e.target.value='';});
+
+// ---- Init ----
+checkClearOnLoad();
+scheduleClear();
+renderTabs();
+renderTable();
+
+// PWA 引导：首次访问提示“添加到主屏幕”
+(function(){
+  try{
+    if(localStorage.getItem('pwaHintSeen'))return;
+    const hint=document.getElementById('pwaHint');
+    if(hint)hint.classList.remove('hide');
+    const close=document.getElementById('pwaHintClose');
+    if(close)close.addEventListener('click',()=>{hint.classList.add('hide');localStorage.setItem('pwaHintSeen','1');});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
