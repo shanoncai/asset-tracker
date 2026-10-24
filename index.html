@@ -170,7 +170,7 @@ table.asset tfoot td.num{text-align:center;}
 const STORAGE_KEY='asset_tracker_v1';
 const FIELDS=[
   {key:'微信',label:'微信',type:'text',align:'left'},
-  {key:'登录',label:'登录',type:'status',align:'center'},
+  {key:'登录',label:'登录',type:'text',align:'center'},
   {key:'排队券',label:'排队券',type:'num',align:'right'},
   {key:'85券',label:'85券',type:'num',align:'right'},
   {key:'积分',label:'积分',type:'points',align:'right'},
@@ -193,14 +193,14 @@ function blankRow(){return {微信:'',登录:'',排队券:0,'85券':0,券码:'',
 
 function defaultState(){
   const ws1={id:uid(),name:'会员主表',sort:{key:null,dir:null},rows:[
-    {微信:'小鱼',登录:'已登录',排队券:2,'85券':1,券码:'DQ2026-8X',积分:3200,买单:3,余额:159,生日:'08-15',保级日:'2026-11-02',成长值:6800,等级:'V6',主副卡:'主卡'},
-    {微信:'阿强',登录:'未登录',排队券:0,'85券':0,券码:'',积分:1200,买单:0,余额:0,生日:'03-21',保级日:'2026-12-30',成长值:2100,等级:'V3',主副卡:'副卡'},
-    {微信:'丽丽',登录:'已登录',排队券:5,'85券':3,券码:'VIP88-22',积分:4500,买单:1,余额:899,生日:'12-01',保级日:'2026-10-30',成长值:9100,等级:'V8',主副卡:'主卡'},
-    {微信:'老王',登录:'未登录',排队券:1,'85券':0,券码:'',积分:2800,买单:2,余额:42,生日:'06-06',保级日:'2027-01-15',成长值:3300,等级:'V4',主副卡:'副卡'},
+    {微信:'小鱼',登录:'',排队券:2,'85券':1,券码:'DQ2026-8X',积分:3200,买单:3,余额:159,生日:'08-15',保级日:'2026-11-02',成长值:6800,等级:'V6',主副卡:'主卡'},
+    {微信:'阿强',登录:'',排队券:0,'85券':0,券码:'',积分:1200,买单:0,余额:0,生日:'03-21',保级日:'2026-12-30',成长值:2100,等级:'V3',主副卡:'副卡'},
+    {微信:'丽丽',登录:'',排队券:5,'85券':3,券码:'VIP88-22',积分:4500,买单:1,余额:899,生日:'12-01',保级日:'2026-10-30',成长值:9100,等级:'V8',主副卡:'主卡'},
+    {微信:'老王',登录:'',排队券:1,'85券':0,券码:'',积分:2800,买单:2,余额:42,生日:'06-06',保级日:'2027-01-15',成长值:3300,等级:'V4',主副卡:'副卡'},
   ]};
   const ws2={id:uid(),name:'副卡表',sort:{key:null,dir:null},rows:[
-    {微信:'小美',登录:'已登录',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:0,余额:66,生日:'09-09',保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
-    {微信:'大壮',登录:'未登录',排队券:0,'85券':1,券码:'',积分:3100,买单:4,余额:0,生日:'01-05',保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
+    {微信:'小美',登录:'',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:0,余额:66,生日:'09-09',保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
+    {微信:'大壮',登录:'',排队券:0,'85券':1,券码:'',积分:3100,买单:4,余额:0,生日:'01-05',保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
   ]};
   return {worksheets:[ws1,ws2],activeWsId:ws1.id,lastClearMonth:monthKey(new Date())};
 }
@@ -298,6 +298,10 @@ function renderTable(){
 
 function cellHtml(f,r,oi){
   const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}"`;
+  if(f.key==='登录'){
+    const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
+    return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
+  }
   if(f.type==='status'){
     const on=v==='已登录';
     const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
@@ -334,9 +338,9 @@ function cellHtml(f,r,oi){
 function startCellEdit(td,i,key){
   const ws=activeWs();const r=ws.rows[i];const f=FIELDS.find(x=>x.key===key);const val=r[key];
   let editor='';
-  if(f.type==='status'||f.key==='主副卡'){
-    const opts=f.type==='status'?['','已登录','未登录']:['主卡','副卡'];
-    editor='<select class="cell-editor">'+opts.map(o=>`<option value="${o}" ${String(val)===o?'selected':''}>${o||'（未填）'}</option>`).join('')+'</select>';
+  if(f.key==='主副卡'){
+    const opts=['主卡','副卡'];
+    editor='<select class="cell-editor">'+opts.map(o=>`<option value="${o}" ${String(val)===o?'selected':''}>${o}</option>`).join('')+'</select>';
   }else{
     const type=(f.type==='num'||f.type==='points'||f.type==='money')?'number':'text';
     const step='step="1"';
@@ -423,7 +427,6 @@ tableMountEl.addEventListener('touchstart',startResize,{passive:false});
 let modalMode='add',modalIndex=-1;
 function fieldInput(f,val){
   const id='f_'+f.key;
-  if(f.key==='登录'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option value="" ${val===''?'selected':''}>（未填）</option><option value="已登录" ${val==='已登录'?'selected':''}>已登录</option><option value="未登录" ${val==='未登录'?'selected':''}>未登录</option></select></label>`;}
   if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option ${val==='主卡'?'selected':''}>主卡</option><option ${val!=='主卡'?'selected':''}>副卡</option></select></label>`;}
   const type=(f.type==='num'||f.type==='points'||f.type==='money')?'number':'text';
   const step='step="1"';
