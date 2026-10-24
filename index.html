@@ -269,7 +269,7 @@ function renderTabs(){
   const el=document.getElementById('tabs');let h='';
   state.worksheets.forEach(w=>{
     const active=w.id===state.activeWsId?' active':'';
-    h+=`<div class="ws-tab${active}" data-id="${w.id}">${escapeHtml(w.name)}<span class="ws-edit" data-act="rename" data-id="${w.id}">✎</span><span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
+    h+=`<div class="ws-tab${active}" data-id="${w.id}" title="双击重命名">${escapeHtml(w.name)}<span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
   });
   h+=`<button class="ws-add" data-act="add">+ 新建工作表</button>`;
   el.innerHTML=h;
@@ -413,10 +413,16 @@ function startCellEdit(td,i,key){
 document.getElementById('tabs').addEventListener('click',e=>{
   const act=e.target.dataset.act;const id=e.target.dataset.id;
   if(act==='add'){snapshot();state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
-  if(act==='rename'){const w=state.worksheets.find(x=>x.id===id);const n=prompt('重命名工作表',w.name);if(n&&n.trim()){snapshot();w.name=n.trim();save();renderTabs();renderTable();}return;}
   if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;snapshot();
     state.worksheets=state.worksheets.filter(x=>x.id!==id);if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;save();renderTabs();renderTable();return;}
   const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
+});
+// 双击工作表标签重命名
+document.getElementById('tabs').addEventListener('dblclick',e=>{
+  const tab=e.target.closest('.ws-tab');if(!tab)return;
+  const w=state.worksheets.find(x=>x.id===tab.dataset.id);if(!w)return;
+  const n=prompt('重命名工作表',w.name);
+  if(n&&n.trim()){snapshot();w.name=n.trim();save();renderTabs();renderTable();}
 });
 
 document.getElementById('btnRefresh').addEventListener('click',()=>{checkClearOnLoad();renderTable();toast('已刷新');});
