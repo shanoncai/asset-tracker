@@ -177,6 +177,7 @@ const FIELDS=[
   {key:'85券',label:'85券',type:'num',align:'right'},
   {key:'积分',label:'积分',type:'points',align:'right'},
   {key:'买单',label:'买单',type:'text',align:'center'},
+  {key:'手机号',label:'手机号',type:'text',align:'center'},
   {key:'余额',label:'余额',type:'money',align:'right'},
   {key:'生日',label:'生日',type:'text',align:'center'},
   {key:'生日券',label:'生日券',type:'num',align:'right'},
@@ -201,7 +202,7 @@ function undo(){
 function uid(){return 'ws'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function monthKey(d){return d.getFullYear()+'-'+(d.getMonth()+1);}
 function activeWs(){return state.worksheets.find(w=>w.id===state.activeWsId)||state.worksheets[0];}
-function blankRow(){return {微信:'',登录:'',排队券:'','85券':'',券码:'',积分:'',买单:'',余额:'',生日:'',生日券:'',保级日:'',成长值:'',等级:'',主副卡:''};}
+function blankRow(){return {微信:'',登录:'',排队券:'','85券':'',券码:'',积分:'',买单:'',手机号:'',余额:'',生日:'',生日券:'',保级日:'',成长值:'',等级:'',主副卡:''};}
 
 function defaultState(){
   const ws1={id:uid(),name:'会员主表',sort:{key:null,dir:null},rows:[
@@ -226,7 +227,7 @@ function load(){
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
 
 // 列宽（独立持久化，不进数据备份）
-const DEFAULT_COLS=[90,64,56,50,56,50,78,66,92,62,50,58,110]; // 对应 FIELDS 顺序
+const DEFAULT_COLS=[90,64,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 FIELDS 顺序（含手机号、券码）
 const COL_KEY='asset_tracker_colw_v1';
 function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
 function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
