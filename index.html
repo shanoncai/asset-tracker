@@ -162,7 +162,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v34</div>
+<div class="ver-tag" id="verTag">v35</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -300,6 +300,7 @@ function renderTable(){
   const sumBal=rows.reduce((s,r)=>s+(Number(r['余额'])||0),0);
   const sumQueue=rows.reduce((s,r)=>s+(Number(r['排队券'])||0),0);
   const sumBirthday=rows.reduce((s,r)=>s+(Number(r['生日券'])||0),0);
+  const sumWx=rows.reduce((s,r)=>s+((r['微信']===''||r['微信']==null)?0:1),0);
 
   // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
   const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="min-width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
@@ -320,10 +321,10 @@ function renderTable(){
   });
   body+='</tbody>';
 
-  // 合计行（仅积分/余额求和，操作列留空）
+  // 合计行（积分/余额/排队券/生日券求和，微信列统计个数，操作列留空）
   let foot='<tfoot><tr>';
   FIELDS.forEach(f=>{
-    if(f.key==='微信')foot+=`<td class="c-left"></td>`;
+    if(f.key==='微信')foot+=`<td class="num">${sumWx}</td>`;
     else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
