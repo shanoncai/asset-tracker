@@ -69,7 +69,7 @@ table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tf
 
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
-table.asset{width:-webkit-max-content;width:max-content;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
 table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:24px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);user-select:none;}
 table.asset thead th.sortable{cursor:pointer;}
 table.asset thead th:hover{background:#e9edf2;}
@@ -136,7 +136,7 @@ table.asset tfoot td.num{text-align:center;}
   .btn{height:36px;flex:1;justify-content:center;}
   /* 表格：强制最小宽度 → 横向滚动，不挤压不变卡片 */
   .table-wrap{max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);}
-  table.asset{min-width:-webkit-max-content;min-width:max-content;}
+  table.asset{min-width:0;}
   table.asset{font-size:12px;}
   table.asset thead th{height:23px;font-size:12px;padding:0 4px;}
   table.asset tbody td{height:23px;padding:0 4px;}
@@ -162,7 +162,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v28</div>
+<div class="ver-tag" id="verTag">v29</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -254,6 +254,7 @@ const DEFAULT_COLS=[38,64,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 F
 const COL_KEY='asset_tracker_colw_v1';
 function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
 function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
+function setTableWidth(){const tb=document.querySelector('#tableMount table.asset');if(tb)tb.style.width=(colWidths.reduce((a,b)=>a+b,0)+40)+'px';}
 const colWidths=loadCols();
 colWidths[0]=38; // 微信列最小宽度
 
@@ -334,6 +335,7 @@ function renderTable(){
   foot+='<td></td></tr></tfoot>';
 
   document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
+  setTableWidth();
   const subEl=document.getElementById('subInfo');
   if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
   applySelection();
@@ -493,7 +495,7 @@ function startResize(e){
     const x=(ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX;
     const w=Math.max(40,Math.round(startW+(x-startX)));
     colWidths[col]=w;
-    if(colEl)colEl.style.width=w+'px';
+    if(colEl){colEl.style.width=w+'px';setTableWidth();}
     if(ev.cancelable)ev.preventDefault();
   }
   function end(){document.removeEventListener('mousemove',move);document.removeEventListener('mouseup',end);document.removeEventListener('touchmove',move);document.removeEventListener('touchend',end);saveCols();}
