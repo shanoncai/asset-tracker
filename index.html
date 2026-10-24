@@ -201,7 +201,7 @@ function undo(){
 function uid(){return 'ws'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function monthKey(d){return d.getFullYear()+'-'+(d.getMonth()+1);}
 function activeWs(){return state.worksheets.find(w=>w.id===state.activeWsId)||state.worksheets[0];}
-function blankRow(){return {微信:'',登录:'',排队券:0,'85券':0,券码:'',积分:0,买单:'',余额:0,生日:'',生日券:0,保级日:'',成长值:0,等级:'',主副卡:'副卡'};}
+function blankRow(){return {微信:'',登录:'',排队券:'','85券':'',券码:'',积分:'',买单:'',余额:'',生日:'',生日券:'',保级日:'',成长值:'',等级:'',主副卡:''};}
 
 function defaultState(){
   const ws1={id:uid(),name:'会员主表',sort:{key:null,dir:null},rows:[
@@ -341,9 +341,10 @@ function cellHtml(f,r,oi){
     return `<td class="${cls}" ${attr}>${escapeHtml(v||'')}</td>`;
   }
   if(f.type==='badge'){
+    if(!v)return `<td class="c-center" ${attr}></td>`;
     let bcls='badge-primary';
     if(f.key==='主副卡')bcls=v==='主卡'?'badge-success':'badge-neutral';
-    return `<td class="c-center" ${attr}><span class="badge ${bcls}">${escapeHtml(v||'')}</span></td>`;
+    return `<td class="c-center" ${attr}><span class="badge ${bcls}">${escapeHtml(v)}</span></td>`;
   }
   const tcls=f.align==='center'?'c-center':(f.align==='right'?'num':'c-left');
   return `<td class="${tcls}" ${attr}><span class="cell-text">${escapeHtml(v||'')}</span></td>`;
@@ -438,7 +439,7 @@ tableMountEl.addEventListener('touchstart',startResize,{passive:false});
 let modalMode='add',modalIndex=-1;
 function fieldInput(f,val){
   const id='f_'+f.key;
-  if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option ${val==='主卡'?'selected':''}>主卡</option><option ${val!=='主卡'?'selected':''}>副卡</option></select></label>`;}
+  if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option value="" ${val===''?'selected':''}>（未填）</option><option ${val==='主卡'?'selected':''}>主卡</option><option ${val==='副卡'?'selected':''}>副卡</option></select></label>`;}
   const type=(f.type==='num'||f.type==='points'||f.type==='money')?'number':'text';
   const step='step="1"';
   const ph=f.key==='生日'?'MM-DD':(f.key==='保级日'?'YYYY-MM-DD':'');
@@ -458,8 +459,7 @@ document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='
 document.getElementById('btnSave').addEventListener('click',()=>{
   const vals={};
   FIELDS.forEach(f=>{vals[f.key]=readVal(f);});
-  ['排队券','85券','积分','成长值','生日券'].forEach(k=>vals[k]=Number(vals[k])||0);
-  vals['余额']=Math.round(Number(vals['余额'])||0);
+  ['排队券','85券','积分','成长值','生日券','余额'].forEach(k=>{const t=document.getElementById('f_'+k).value.trim();vals[k]=t===''?'':(k==='余额'?Math.round(Number(t)||0):(Number(t)||0));});
   snapshot();
   if(modalMode==='add')activeWs().rows.push(vals);
   else activeWs().rows[modalIndex]=vals;
