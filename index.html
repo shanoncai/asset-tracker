@@ -276,7 +276,7 @@ function renderTable(){
     const oi=ws.rows.indexOf(r);
     body+='<tr data-i="'+oi+'">';
     FIELDS.forEach(f=>{body+=cellHtml(f,r,oi);});
-    body+=`<td class="c-center"><button class="row-edit" data-act="edit" data-i="${oi}" title="编辑">✎</button></td>`;
+    body+=`<td class="c-center"><button class="row-edit" data-act="delrow" data-i="${oi}" title="删除此行">🗑</button></td>`;
     body+='</tr>';
   });
   body+='</tbody>';
@@ -384,15 +384,9 @@ document.getElementById('tableMount').addEventListener('click',e=>{
     if(i<0||i>=activeWs().rows.length)return;
     startCellEdit(cell,i,key);return;
   }
-  const editBtn=e.target.closest('[data-act="edit"]');
-  if(editBtn){const i=+editBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;openModal('edit',i);return;}
+  const delBtn=e.target.closest('[data-act="delrow"]');
+  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){activeWs().rows.splice(i,1);save();renderTable();}return;}
 });
-document.getElementById('tableMount').addEventListener('dblclick',e=>{
-  const tr=e.target.closest('tr');if(!tr||tr.parentElement.tagName!=='TBODY')return;
-  const i=+tr.dataset.i;if(i<0||i>=activeWs().rows.length)return;
-  openModal('edit',i);
-});
-
 // ---- 列宽拖拽（鼠标 + 触屏） ----
 function startResize(e){
   const rz=e.target.closest('.resizer');if(!rz)return;
