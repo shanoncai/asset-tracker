@@ -143,6 +143,7 @@ table.asset tfoot td.num{text-align:center;}
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
+    <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
     <button class="btn btn-secondary" id="btnRefresh">刷新</button>
     <div class="spacer"></div>
     <button class="btn btn-secondary" id="btnImport">导入</button>
@@ -183,6 +184,15 @@ const FIELDS=[
 ];
 
 let state=load()||defaultState();
+
+// 撤销：编辑前快照数据状态，最多保留 50 步
+const undoStack=[];const MAX_UNDO=50;
+function snapshot(){try{undoStack.push(JSON.stringify(state));if(undoStack.length>MAX_UNDO)undoStack.shift();}catch(e){}}
+function undo(){
+  if(!undoStack.length){toast('没有可撤销的操作');return;}
+  try{state=JSON.parse(undoStack.pop());}catch(e){return;}
+  save();renderTabs();renderTable();toast('已撤销上一步');
+}
 
 function uid(){return 'ws'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
 function monthKey(d){return d.getFullYear()+'-'+(d.getMonth()+1);}
@@ -346,6 +356,7 @@ function startCellEdit(td,i,key){
   let done=false;
   const finish=(saveIt)=>{if(done)return;done=true;
     if(saveIt){
+      snapshot();
       if(f.type==='money'){r[key]=el.value===''?0:Math.round(Number(el.value)||0);}
       else if(f.type==='num'||f.type==='points'){r[key]=el.value===''?'':(Number(el.value)||0);}
       else r[key]=el.value;
@@ -364,14 +375,15 @@ function startCellEdit(td,i,key){
 // ---- Events ----
 document.getElementById('tabs').addEventListener('click',e=>{
   const act=e.target.dataset.act;const id=e.target.dataset.id;
-  if(act==='add'){state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
-  if(act==='rename'){const w=state.worksheets.find(x=>x.id===id);const n=prompt('重命名工作表',w.name);if(n&&n.trim()){w.name=n.trim();save();renderTabs();renderTable();}return;}
-  if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;
+  if(act==='add'){snapshot();state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
+  if(act==='rename'){const w=state.worksheets.find(x=>x.id===id);const n=prompt('重命名工作表',w.name);if(n&&n.trim()){snapshot();w.name=n.trim();save();renderTabs();renderTable();}return;}
+  if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;snapshot();
     state.worksheets=state.worksheets.filter(x=>x.id!==id);if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;save();renderTabs();renderTable();return;}
   const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
 });
 
 document.getElementById('btnRefresh').addEventListener('click',()=>{checkClearOnLoad();renderTable();toast('已刷新');});
+document.getElementById('btnUndo').addEventListener('click',undo);
 document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-1));
 
 document.getElementById('tableMount').addEventListener('click',e=>{
@@ -384,7 +396,7 @@ document.getElementById('tableMount').addEventListener('click',e=>{
     startCellEdit(cell,i,key);return;
   }
   const delBtn=e.target.closest('[data-act="delrow"]');
-  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){activeWs().rows.splice(i,1);save();renderTable();}return;}
+  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);save();renderTable();}return;}
 });
 // ---- 列宽拖拽（鼠标 + 触屏） ----
 function startResize(e){
@@ -437,6 +449,7 @@ document.getElementById('btnSave').addEventListener('click',()=>{
   FIELDS.forEach(f=>{vals[f.key]=readVal(f);});
   ['排队券','85券','积分','买单','成长值'].forEach(k=>vals[k]=Number(vals[k])||0);
   vals['余额']=Math.round(Number(vals['余额'])||0);
+  snapshot();
   if(modalMode==='add')activeWs().rows.push(vals);
   else activeWs().rows[modalIndex]=vals;
   closeModal();save();renderTable();
