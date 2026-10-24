@@ -23,7 +23,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--color-ink);background:var(--color-gray-50);-webkit-text-size-adjust:100%;}
-.container{max-width:1600px;margin:0 auto;padding:16px 16px 24px;}
+.container{max-width:1600px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));}
 
 /* Header */
 .page-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
