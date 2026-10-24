@@ -302,11 +302,6 @@ function cellHtml(f,r,oi){
     const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
   }
-  if(f.type==='status'){
-    const on=v==='已登录';
-    const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
-    return `<td class="c-center" ${attr}><span class="login ${on?'on':'off'}"><i class="dot"></i>${txt}</span></td>`;
-  }
   if(f.type==='num'){
     const n=Number(v)||0;const zero=(v===''||v==null||n===0);
     return `<td class="num ${zero?'zero':''}" ${attr}>${n}</td>`;
