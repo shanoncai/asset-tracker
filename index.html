@@ -146,12 +146,12 @@ table.asset tfoot td.num{text-align:center;}
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
+    <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
     <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
     <button class="btn btn-secondary" id="btnRefresh">刷新</button>
     <div class="spacer"></div>
     <button class="btn btn-secondary" id="btnImport">导入</button>
     <button class="btn btn-secondary" id="btnExport">导出</button>
-    <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
     <input type="file" id="fileInput" accept="application/json,.json" style="display:none">
   </div>
 </div>
@@ -315,15 +315,17 @@ function cellHtml(f,r,oi){
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
   }
   if(f.type==='num'){
-    const n=Number(v)||0;const zero=(v===''||v==null||n===0);
-    return `<td class="num ${zero?'zero':''}" ${attr}>${n}</td>`;
+    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
+    return `<td class="num ${blank?'zero':''}" ${attr}>${blank?'':n}</td>`;
   }
   if(f.type==='points'){
-    const n=Number(v)||0;const cls=n>=3000?'num points-high':'num';
-    return `<td class="${cls}" ${attr}>${n}</td>`;
+    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
+    const cls=blank?'num':(n>=3000?'num points-high':'num');
+    return `<td class="${cls}" ${attr}>${blank?'':n}</td>`;
   }
   if(f.type==='money'){
-    return `<td class="num" ${attr}>¥${fmtMoney(v)}</td>`;
+    const n=Number(v)||0;const blank=(v===''||v==null||n===0);
+    return `<td class="num" ${attr}>${blank?'':'¥'+fmtMoney(v)}</td>`;
   }
   if(f.type==='code'){
     const txt=(v===''||v==null)?'—':v;
