@@ -68,6 +68,9 @@ table.asset thead th .sort-ind{color:var(--color-primary);margin-left:3px;font-s
 table.asset thead th .resizer{position:absolute;right:0;top:0;height:100%;width:8px;cursor:col-resize;z-index:4;touch-action:none;}
 table.asset thead th .resizer:hover{background:var(--color-primary);opacity:.25;}
 table.asset tbody td{padding:0 5px;height:22px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border);color:var(--color-ink);}
+table.asset tbody tr.selected td{background:rgba(99,91,255,.13);box-shadow:inset 3px 0 0 var(--color-primary);}
+table.asset tbody tr.selected td:first-child{border-top-left-radius:4px;border-bottom-left-radius:4px;}
+table.asset tbody tr.selected td:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px;}
 table.asset tbody tr:nth-child(even){background:var(--color-gray-50);}
 table.asset tbody tr:hover{background:var(--color-primary-soft);}
 table.asset tbody tr{cursor:default;}
@@ -317,6 +320,15 @@ function renderTable(){
   document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
   const subEl=document.getElementById('subInfo');
   if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
+  applySelection();
+}
+
+// ---- 整行选中（锁定高亮，不随排序/滚动改变） ----
+let selOi=null;
+function applySelection(){
+  document.querySelectorAll('#tableMount tbody tr').forEach(tr=>{
+    tr.classList.toggle('selected', +tr.dataset.i===selOi);
+  });
 }
 
 function cellHtml(f,r,oi){
@@ -410,8 +422,17 @@ document.getElementById('tableMount').addEventListener('click',e=>{
   const th=e.target.closest('th[data-key]');
   if(th && !e.target.closest('.resizer')){ toggleSort(th.dataset.key); return; }
   const delBtn=e.target.closest('[data-act="delrow"]');
-  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);save();renderTable();}return;}
+  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);if(selOi===i)selOi=null;save();renderTable();}return;}
+  // 选中整行：点同行取消，点其他行保持原选中（横滑不误触）
+  const tr=e.target.closest('tbody tr');
+  if(tr && !touchMoved){ const i=+tr.dataset.i; if(i===selOi){selOi=null;applySelection();} }
+  touchMoved=false;
 });
+// 区分「点」与「横滑」：横滑查看时不触发选中
+let touchMoved=false, _tsX=0, _tsY=0;
+const _tm=document.getElementById('tableMount');
+_tm.addEventListener('touchstart',e=>{const t=e.touches[0];_tsX=t.clientX;_tsY=t.clientY;touchMoved=false;},{passive:true});
+_tm.addEventListener('touchmove',e=>{const t=e.touches[0];if(t&&(Math.abs(t.clientX-_tsX)>10||Math.abs(t.clientY-_tsY)>10))touchMoved=true;},{passive:true});
 // 双击单元格进入就地编辑（单击只用于排序/删除）
 document.getElementById('tableMount').addEventListener('dblclick',e=>{
   const cell=e.target.closest('td[data-key]');
