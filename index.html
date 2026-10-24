@@ -125,9 +125,6 @@ table.asset tfoot td.num{text-align:center;}
   .fld input,.fld select{height:38px;}
   .row-edit{width:30px;height:30px;}
 }
-.pwa-hint{display:flex;align-items:center;gap:8px;background:var(--color-primary-soft);color:var(--color-primary);border:1px solid var(--color-primary);border-radius:8px;padding:8px 12px;font-size:12.5px;margin-bottom:10px;line-height:1.4;}
-.pwa-hint button{margin-left:auto;background:var(--color-primary);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0;}
-.pwa-hint.hide{display:none;}
 </style>
 
 <!-- PWA / iOS standalone (添加到主屏幕当 App 用) -->
@@ -141,10 +138,6 @@ table.asset tfoot td.num{text-align:center;}
 </head>
 <body>
 <div class="container">
-  <div id="pwaHint" class="pwa-hint hide">
-    📱 在 iPhone 上：点 Safari 底部「分享」→「添加到主屏幕」，即可像 App 一样全屏打开本页。
-    <button id="pwaHintClose" type="button">知道了</button>
-  </div>
   <div class="page-head">
     <h1>虚拟资产账号追踪</h1>
     <span class="sub" id="subInfo"></span>
@@ -533,16 +526,6 @@ scheduleClear();
 renderTabs();
 renderTable();
 
-// PWA 引导：首次访问提示“添加到主屏幕”
-(function(){
-  try{
-    if(localStorage.getItem('pwaHintSeen'))return;
-    const hint=document.getElementById('pwaHint');
-    if(hint)hint.classList.remove('hide');
-    const close=document.getElementById('pwaHintClose');
-    if(close)close.addEventListener('click',()=>{hint.classList.add('hide');localStorage.setItem('pwaHintSeen','1');});
-  }catch(e){}
-})();
 </script>
 </body>
 </html>
