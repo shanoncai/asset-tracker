@@ -62,7 +62,8 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
 table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
-table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:24px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);cursor:pointer;user-select:none;}
+table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:24px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);user-select:none;}
+table.asset thead th.sortable{cursor:pointer;}
 table.asset thead th:hover{background:#e9edf2;}
 table.asset thead th .sort-ind{color:var(--color-primary);margin-left:3px;font-size:10px;}
 table.asset thead th .resizer{position:absolute;right:0;top:0;height:100%;width:8px;cursor:col-resize;z-index:4;touch-action:none;}
@@ -275,7 +276,7 @@ function renderTabs(){
 function renderTable(){
   const ws=activeWs();
   let rows=ws.rows.slice();
-  if(ws.sort.key){
+  if(ws.sort.key==='积分'){
     const type=sortType(FIELDS.find(f=>f.key===ws.sort.key));
     const dir=ws.sort.dir==='asc'?1:-1;
     rows=rows.slice().sort((a,b)=>{let x=a[ws.sort.key],y=b[ws.sort.key];
@@ -292,7 +293,7 @@ function renderTable(){
   let head=colgroup+'<thead><tr>'+FIELDS.map((f,i)=>{
     let ind='';
     if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
-    return `<th class="c-${f.align}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
+    return `<th class="c-${f.align}${f.key==='积分'?' sortable':''}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
   }).join('')+'<th class="c-center" style="cursor:default">操作</th></tr></thead>';
 
   // 表体（data-i 用原始行索引，避免搜索/排序后改错行）
@@ -422,7 +423,7 @@ document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-
 
 document.getElementById('tableMount').addEventListener('click',e=>{
   const th=e.target.closest('th[data-key]');
-  if(th && !e.target.closest('.resizer')){ toggleSort(th.dataset.key); return; }
+  if(th && !e.target.closest('.resizer')){ if(th.dataset.key==='积分')toggleSort('积分'); return; }
   const delBtn=e.target.closest('[data-act="delrow"]');
   if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);if(selOi===i)selOi=null;save();renderTable();}return;}
   // 选中整行：点同行取消，点其他行保持原选中（横滑不误触）
