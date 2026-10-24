@@ -285,6 +285,7 @@ function renderTable(){
   const sumPoints=rows.reduce((s,r)=>s+(Number(r['积分'])||0),0);
   const sumBal=rows.reduce((s,r)=>s+(Number(r['余额'])||0),0);
   const sumQueue=rows.reduce((s,r)=>s+(Number(r['排队券'])||0),0);
+  const sumBirthday=rows.reduce((s,r)=>s+(Number(r['生日券'])||0),0);
 
   // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
   const colgroup='<colgroup>'+FIELDS.map((f,i)=>`<col data-col="${i}" style="width:${colWidths[i]}px">`).join('')+'<col style="width:40px"></colgroup>';
@@ -312,6 +313,7 @@ function renderTable(){
     else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
+    else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
     else foot+=`<td></td>`;
   });
