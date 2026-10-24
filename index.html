@@ -162,7 +162,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v31</div>
+<div class="ver-tag" id="verTag">v32</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -250,12 +250,12 @@ function load(){
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
 
 // 列宽（独立持久化，不进数据备份）
-const DEFAULT_COLS=[52,78,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 FIELDS 顺序（含手机号、券码）
+const DEFAULT_COLS=[64,90,56,50,56,50,100,78,66,92,62,50,58,110,90]; // 对应 FIELDS 顺序（含手机号、券码）
 const COL_KEY='asset_tracker_colw_v1';
 function loadCols(){try{const a=JSON.parse(localStorage.getItem(COL_KEY));if(Array.isArray(a)&&a.length===FIELDS.length&&a.every(n=>typeof n==='number'))return a;}catch(e){}return DEFAULT_COLS.slice();}
 function saveCols(){try{localStorage.setItem(COL_KEY,JSON.stringify(colWidths));}catch(e){}}
 const colWidths=loadCols();
-colWidths[0]=52; // 微信列最小宽度
+colWidths[0]=64; colWidths[1]=90; // 强制微信/登录列宽，覆盖手机旧缓存列宽
 
 // 表头点击排序：升 → 降 → 取消（三轮）
 function toggleSort(key){
