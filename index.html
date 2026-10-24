@@ -47,6 +47,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-add{height:36px;padding:0 10px;background:transparent;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;white-space:nowrap;}
 .ws-add:hover{color:var(--color-primary-hover);}
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
+.asset tbody td.wx-hi{background:#fff3cd !important;}
 
 /* Action bar (bottom) */
 .action-bar{display:flex;align-items:center;gap:10px;height:auto;padding:12px 12px 4px;margin-top:12px;flex-wrap:wrap;}
@@ -340,6 +341,7 @@ function applySelection(){
 
 function cellHtml(f,r,oi){
   const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}"`;
+  if(f.key==='微信'){const bv=r['生日券'];const hi=!(bv===''||bv==null)&&Number(bv)!==0;const txt=(v===''||v==null)?'':escapeHtml(v);return `<td class="c-center${hi?' wx-hi':''}" ${attr}><span class="cell-text">${txt}</span></td>`;}
   if(f.key==='登录'){
     const txt=v?escapeHtml(v):'';
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
