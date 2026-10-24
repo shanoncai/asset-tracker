@@ -46,6 +46,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-tab:hover .ws-edit,.ws-tab.active .ws-edit{opacity:1;}
 .ws-add{height:36px;padding:0 10px;background:transparent;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;white-space:nowrap;}
 .ws-add:hover{color:var(--color-primary-hover);}
+.ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
 
 /* Action bar (bottom) */
 .action-bar{display:flex;align-items:center;gap:10px;height:auto;padding:12px 12px 4px;margin-top:12px;flex-wrap:wrap;}
@@ -140,6 +141,7 @@ table.asset tfoot td.num{text-align:center;}
   .fld input,.fld select{height:38px;}
   .row-edit{width:22px;height:22px;font-size:12px;}
   .ws-tab,.ws-add{height:42px;font-size:14px;}
+  .ws-rename-input{height:24px;font-size:14px;}
 }
 </style>
 
@@ -269,7 +271,7 @@ function renderTabs(){
   const el=document.getElementById('tabs');let h='';
   state.worksheets.forEach(w=>{
     const active=w.id===state.activeWsId?' active':'';
-    h+=`<div class="ws-tab${active}" data-id="${w.id}" title="双击重命名">${escapeHtml(w.name)}<span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
+    h+=`<div class="ws-tab${active}" data-id="${w.id}" title="双击或长按重命名"><span class="ws-name">${escapeHtml(w.name)}</span><span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
   });
   h+=`<button class="ws-add" data-act="add">+ 新建工作表</button>`;
   el.innerHTML=h;
@@ -415,15 +417,31 @@ document.getElementById('tabs').addEventListener('click',e=>{
   if(act==='add'){snapshot();state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
   if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;snapshot();
     state.worksheets=state.worksheets.filter(x=>x.id!==id);if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;save();renderTabs();renderTable();return;}
+  if(e.target.closest('.ws-rename-input'))return;
+  if(_justLong){_justLong=false;e.preventDefault();e.stopPropagation();return;}
   const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
 });
-// 双击工作表标签重命名
-document.getElementById('tabs').addEventListener('dblclick',e=>{
-  const tab=e.target.closest('.ws-tab');if(!tab)return;
+// 工作表标签重命名：桌面双击 / 手机长按，就地内联编辑（避免 iOS 禁用 prompt）
+let _justLong=false;
+function startRename(tab){
+  if(!tab||tab.querySelector('.ws-rename-input'))return;
   const w=state.worksheets.find(x=>x.id===tab.dataset.id);if(!w)return;
-  const n=prompt('重命名工作表',w.name);
-  if(n&&n.trim()){snapshot();w.name=n.trim();save();renderTabs();renderTable();}
-});
+  const nameEl=tab.querySelector('.ws-name');if(!nameEl)return;
+  const input=document.createElement('input');
+  input.className='ws-rename-input';input.value=w.name;
+  nameEl.replaceWith(input);input.focus();input.select();
+  let done=false;
+  const commit=()=>{if(done)return;done=true;const v=input.value.trim();if(v){snapshot();w.name=v;save();}renderTabs();renderTable();};
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit();}else if(e.key==='Escape'){done=true;renderTabs();}});
+  input.addEventListener('blur',commit);
+}
+const _tabsEl=document.getElementById('tabs');
+_tabsEl.addEventListener('dblclick',e=>{const t=e.target.closest('.ws-tab');if(!t)return;const tab=_tabsEl.querySelector('.ws-tab[data-id="'+t.dataset.id+'"]');if(tab)startRename(tab);});
+// 手机触屏长按触发重命名（iOS 触屏 dblclick 不可靠，且 prompt 被禁用）
+let _lpTimer=null;
+_tabsEl.addEventListener('touchstart',e=>{const tab=e.target.closest('.ws-tab');if(!tab||e.target.closest('.ws-edit'))return;_lpTimer=setTimeout(()=>{_lpTimer=null;_justLong=true;if(navigator.vibrate)navigator.vibrate(10);startRename(tab);},500);},{passive:true});
+_tabsEl.addEventListener('touchmove',()=>{if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;}},{passive:true});
+_tabsEl.addEventListener('touchend',()=>{if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;}},{passive:true});
 
 document.getElementById('btnRefresh').addEventListener('click',()=>{checkClearOnLoad();renderTable();toast('已刷新');});
 document.getElementById('btnUndo').addEventListener('click',undo);
