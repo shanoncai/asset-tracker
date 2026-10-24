@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>虚拟资产账号追踪</title>
 <style>
 :root{
@@ -22,8 +25,8 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
-body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--color-ink);background:var(--color-gray-50);-webkit-text-size-adjust:100%;}
-.container{max-width:1600px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));}
+body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color:var(--color-ink);background:var(--color-gray-50);-webkit-text-size-adjust:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;}
+.container{max-width:1600px;margin:0 auto;padding:16px 16px 24px;}
 
 /* Header */
 .page-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;}
