@@ -69,6 +69,8 @@ table.asset tbody tr{cursor:default;}
 td.num{text-align:center;font-weight:550;}
 .cell-editor{width:100%;box-sizing:border-box;font-size:16px;font-family:inherit;padding:2px 4px;border:1px solid var(--color-primary);border-radius:4px;background:#fff;color:var(--color-ink);text-align:center;}
 .cell-editor:focus{outline:none;box-shadow:0 0 0 2px rgba(99,91,255,.25);}
+.cell-editor[type=number]{-moz-appearance:textfield;appearance:textfield;}
+.cell-editor[type=number]::-webkit-inner-spin-button,.cell-editor[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;}
 td.zero{color:var(--color-gray-400);}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
@@ -299,7 +301,7 @@ function renderTable(){
 function cellHtml(f,r,oi){
   const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}"`;
   if(f.key==='登录'){
-    const txt=v?escapeHtml(v):'<span style="color:var(--color-gray-400)">未填</span>';
+    const txt=v?escapeHtml(v):'';
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
   }
   if(f.type==='num'){
