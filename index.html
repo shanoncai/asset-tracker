@@ -49,6 +49,8 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
 .asset tbody td.wx-hi{background:#fff3cd !important;}
 .asset tbody td.wx-gray{background:#e9ecef !important;}
+.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{width:38px !important;min-width:38px !important;max-width:38px !important;padding-left:2px !important;padding-right:2px !important;}
+.asset td.col-wx .cell-text{max-width:100% !important;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ver-tag{position:fixed;top:4px;right:6px;z-index:999;font-size:10px;line-height:1;color:#8a94a6;background:rgba(255,255,255,.82);border:1px solid #e2e6ec;border-radius:6px;padding:2px 6px;pointer-events:none;font-variant-numeric:tabular-nums;}
 table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tfoot td:first-child{padding-left:3px !important;padding-right:3px !important;}
 
@@ -159,7 +161,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v26</div>
+<div class="ver-tag" id="verTag">v27</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -303,7 +305,7 @@ function renderTable(){
   let head=colgroup+'<thead><tr>'+FIELDS.map((f,i)=>{
     let ind='';
     if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
-    return `<th class="c-${f.align}${f.key==='积分'?' sortable':''}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
+    return `<th class="c-${f.align}${f.key==='积分'?' sortable':''}${f.key==='微信'?' col-wx':''}" data-key="${f.key}">${escapeHtml(f.label)}<span class="sort-ind">${ind}</span><span class="resizer" data-col="${i}"></span></th>`;
   }).join('')+'<th class="c-center" style="cursor:default">操作</th></tr></thead>';
 
   // 表体（data-i 用原始行索引，避免搜索/排序后改错行）
@@ -346,7 +348,7 @@ function applySelection(){
 
 function cellHtml(f,r,oi){
   const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}"`;
-  if(f.key==='微信'){const bv=r['生日券'];const hi=!(bv===''||bv==null)&&Number(bv)!==0;const gray=r['等级']!=='肚神';const cls=hi?' wx-hi':(gray?' wx-gray':'');const txt=(v===''||v==null)?'':escapeHtml(v);return `<td class="c-center${cls}" ${attr}><span class="cell-text">${txt}</span></td>`;}
+  if(f.key==='微信'){const bv=r['生日券'];const hi=!(bv===''||bv==null)&&Number(bv)!==0;const gray=r['等级']!=='肚神';const cls=hi?' wx-hi':(gray?' wx-gray':'');const txt=(v===''||v==null)?'':escapeHtml(v);return `<td class="c-center col-wx${cls}" ${attr}><span class="cell-text">${txt}</span></td>`;}
   if(f.key==='登录'){
     const txt=v?escapeHtml(v):'';
     return `<td class="c-center" ${attr}><span class="cell-text">${txt}</span></td>`;
