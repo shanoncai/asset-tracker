@@ -140,10 +140,6 @@ table.asset tfoot td.num{text-align:center;}
 </head>
 <body>
 <div class="container">
-  <div class="page-head">
-    <h1>虚拟资产账号追踪</h1>
-    <span class="sub" id="subInfo"></span>
-  </div>
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
@@ -295,7 +291,8 @@ function renderTable(){
   foot+='<td></td></tr></tfoot>';
 
   document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
-  document.getElementById('subInfo').textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
+  const subEl=document.getElementById('subInfo');
+  if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
 }
 
 function cellHtml(f,r,oi){
