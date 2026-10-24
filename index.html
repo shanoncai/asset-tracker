@@ -58,7 +58,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
-table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;}
+table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:fixed;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
 table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:32px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);cursor:pointer;user-select:none;}
 table.asset thead th:hover{background:#e9edf2;}
 table.asset thead th .sort-ind{color:var(--color-primary);margin-left:3px;font-size:10px;}
@@ -70,7 +70,7 @@ table.asset tbody tr:hover{background:var(--color-primary-soft);}
 table.asset tbody tr{cursor:default;}
 .c-left{text-align:center;} .c-center{text-align:center;} .c-right{text-align:center;}
 td.num{text-align:center;font-weight:550;}
-.cell-editor{width:100%;box-sizing:border-box;font-size:16px;font-family:inherit;padding:2px 4px;border:1px solid var(--color-primary);border-radius:4px;background:#fff;color:var(--color-ink);text-align:center;}
+.cell-editor{width:100%;box-sizing:border-box;font-size:16px;font-family:inherit;padding:2px 4px;border:1px solid var(--color-primary);border-radius:4px;background:#fff;color:var(--color-ink);text-align:center;user-select:text;-webkit-user-select:text;}
 .cell-editor:focus{outline:none;box-shadow:0 0 0 2px rgba(99,91,255,.25);}
 .cell-editor[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .cell-editor[type=number]::-webkit-inner-spin-button,.cell-editor[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;}
@@ -402,14 +402,17 @@ document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-
 document.getElementById('tableMount').addEventListener('click',e=>{
   const th=e.target.closest('th[data-key]');
   if(th && !e.target.closest('.resizer')){ toggleSort(th.dataset.key); return; }
+  const delBtn=e.target.closest('[data-act="delrow"]');
+  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);save();renderTable();}return;}
+});
+// 双击单元格进入就地编辑（单击只用于排序/删除）
+document.getElementById('tableMount').addEventListener('dblclick',e=>{
   const cell=e.target.closest('td[data-key]');
   if(cell && !e.target.closest('.cell-editor')){
     const i=+cell.dataset.i;const key=cell.dataset.key;
     if(i<0||i>=activeWs().rows.length)return;
-    startCellEdit(cell,i,key);return;
+    startCellEdit(cell,i,key);
   }
-  const delBtn=e.target.closest('[data-act="delrow"]');
-  if(delBtn){const i=+delBtn.dataset.i;if(i<0||i>=activeWs().rows.length)return;if(confirm('删除此行？')){snapshot();activeWs().rows.splice(i,1);save();renderTable();}return;}
 });
 // ---- 列宽拖拽（鼠标 + 触屏） ----
 function startResize(e){
