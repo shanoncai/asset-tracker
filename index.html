@@ -160,7 +160,6 @@ table.asset tfoot td.num{text-align:center;}
     <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
     <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
     <button class="btn btn-secondary" id="btnRefresh">刷新</button>
-    <button class="btn btn-secondary" id="btnRecalc">重算排队券</button>
     <div class="spacer"></div>
     <button class="btn btn-secondary" id="btnImport">导入</button>
     <button class="btn btn-secondary" id="btnExport">导出</button>
@@ -421,7 +420,6 @@ document.getElementById('tabs').addEventListener('click',e=>{
 });
 
 document.getElementById('btnRefresh').addEventListener('click',()=>{checkClearOnLoad();renderTable();toast('已刷新');});
-document.getElementById('btnRecalc').addEventListener('click',recalcQueue);
 document.getElementById('btnUndo').addEventListener('click',undo);
 document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-1));
 
@@ -524,13 +522,6 @@ function doClear(){
   state.worksheets.forEach(w=>w.rows.forEach(r=>syncQueue(r)));
   state.lastClearMonth=monthKey(new Date());save();renderTable();
   toast('排队券已于每月 1 日 03:00 重置（肚神主卡=3，其余空白）');
-}
-// 按当前等级/主卡重算排队券（不动其他列）
-function recalcQueue(){
-  snapshot();
-  state.worksheets.forEach(w=>w.rows.forEach(r=>syncQueue(r)));
-  save();renderTable();
-  toast('已按当前等级/主卡重算排队券');
 }
 function checkClearOnLoad(){
   const now=new Date();
