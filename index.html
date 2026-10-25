@@ -68,7 +68,7 @@ table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tf
 .input{height:30px;padding:0 10px;font-size:12.5px;border-radius:7px;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-ink);font-family:inherit;}
 .input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 3px rgba(99,91,255,.18);}
 .input::placeholder{color:var(--color-gray-500);}
-.btn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:7px;font-size:12.5px;font-weight:550;border:1px solid transparent;cursor:pointer;transition:.12s;font-family:inherit;}
+.btn{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:6px;font-size:11.5px;font-weight:550;border:1px solid transparent;cursor:pointer;transition:.12s;font-family:inherit;}
 .btn-primary{background:var(--color-primary);color:#fff;}
 .btn-primary:hover{background:var(--color-primary-hover);}
 .btn-secondary{background:#fff;color:var(--color-ink);border-color:var(--color-border-strong);}
@@ -129,6 +129,8 @@ table.asset tfoot td.num{text-align:center;}
 .fld input:focus,.fld select:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 3px rgba(99,91,255,.18);}
 .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
+.settings-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 14px;}
+.settings-list .btn{width:100%;justify-content:center;height:32px;font-size:12.5px;}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--color-brand-dark);color:#fff;padding:8px 16px;border-radius:8px;font-size:12.5px;z-index:80;opacity:0;transition:.2s;pointer-events:none;bottom:calc(20px + env(safe-area-inset-bottom));}
 .toast.show{opacity:1;}
 
@@ -140,7 +142,7 @@ table.asset tfoot td.num{text-align:center;}
   /* 底部操作栏：按钮占满宽度 */
   .action-bar{margin-top:8px;gap:8px;padding:8px 4px 4px;}
   .action-bar .spacer{flex-basis:100%;height:0;margin:0;}
-  .btn{height:36px;flex:1;justify-content:center;}
+  .action-bar .btn{height:32px;flex:1;justify-content:center;}
   /* 表格：强制最小宽度 → 横向滚动，不挤压不变卡片 */
   .table-wrap{max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);}
   table.asset{min-width:0;}
@@ -169,17 +171,14 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v44</div>
+<div class="ver-tag" id="verTag">v45</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
     <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
-    <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
-    <button class="btn btn-secondary" id="btnRefresh">刷新</button>
     <div class="spacer"></div>
-    <button class="btn btn-secondary" id="btnImport">导入</button>
-    <button class="btn btn-secondary" id="btnExport">导出</button>
+    <button class="btn btn-secondary" id="btnSettings">⚙ 设置</button>
     <input type="file" id="fileInput" accept="application/json,.json" style="display:none">
   </div>
 </div>
@@ -191,6 +190,20 @@ table.asset tfoot td.num{text-align:center;}
     <div class="modal-actions">
       <button class="btn btn-secondary" id="btnCancel">取消</button>
       <button class="btn btn-primary" id="btnSave">保存</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>设置</h3>
+    <div class="settings-list">
+      <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
+      <button class="btn btn-secondary" id="btnRefresh">刷新</button>
+      <button class="btn btn-secondary" id="btnImport">导入</button>
+      <button class="btn btn-secondary" id="btnExport">导出</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="btnSettingsClose">关闭</button>
     </div>
   </div>
 </div>
@@ -355,7 +368,7 @@ function renderTable(){
     if(f.key==='微信')foot+=`<td class="num">${sumWx}</td>`;
     else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
-    else if(f.key==='余额')foot+=`<td class="num">¥${fmtMoney(sumBal)}</td>`;
+    else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
     else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
     else if(f.key==='登录')foot+=`<td class="col-login"></td>`;
@@ -410,7 +423,7 @@ function cellHtml(f,r,oi){
   }
   if(f.type==='money'){
     const n=Number(v)||0;const empty=(v===''||v==null);
-    return `<td class="num" ${attr}>${empty?'':'¥'+fmtMoney(v)}</td>`;
+    return `<td class="num" ${attr}>${empty?'':fmtMoney(v)}</td>`;
   }
   if(f.type==='code'){
     const txt=(v===''||v==null)?'—':v;
@@ -588,6 +601,11 @@ function closeModal(){document.getElementById('modal').classList.remove('open');
 function readVal(f){return document.getElementById('f_'+f.key).value;}
 document.getElementById('btnCancel').addEventListener('click',closeModal);
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+function openSettings(){document.getElementById('settingsModal').classList.add('open');}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
+document.getElementById('btnSettings').addEventListener('click',openSettings);
+document.getElementById('btnSettingsClose').addEventListener('click',closeSettings);
+document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target.id==='settingsModal')closeSettings();});
 document.getElementById('btnSave').addEventListener('click',()=>{
   const vals={};
   FIELDS.forEach(f=>{vals[f.key]=readVal(f);});
