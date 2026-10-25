@@ -49,7 +49,11 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
 .asset tbody td.wx-hi{background:#ffd43b !important;}
 .asset tbody td.wx-gray{background:#ced4da !important;}
-.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{position:relative;min-width:67px !important;padding-left:2px !important;padding-right:2px !important;}
+.asset thead th.col-wx,.asset tbody td.col-wx,.asset tfoot td.col-wx{min-width:67px !important;padding-left:2px !important;padding-right:2px !important;}
+/* 微信首列冻结：横向滚动时始终固定在左侧 */
+table.asset thead th.col-wx{position:sticky;top:0;left:0;z-index:6;background:var(--color-gray-100) !important;}
+table.asset tbody td.col-wx{position:sticky;left:0;z-index:2;background:var(--color-surface);}
+table.asset tfoot td.col-wx{position:sticky;left:0;z-index:6;background:var(--color-gray-100) !important;}
 .asset tbody td.col-wx .wx-badge{position:absolute;top:0;right:1px;font-size:9px;line-height:1.1;background:#e8590c;color:#fff;border-radius:8px;padding:1px 4px;font-variant-numeric:tabular-nums;pointer-events:none;z-index:2;white-space:nowrap;}
 .asset thead th.col-login,.asset tbody td.col-login,.asset tfoot td.col-login{min-width:67px !important;padding-left:2px !important;padding-right:2px !important;}
 .asset thead th.col-wx{white-space:nowrap;}
@@ -164,7 +168,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v41</div>
+<div class="ver-tag" id="verTag">v42</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -279,10 +283,11 @@ function daysUntil(s){
 function birthdayDaysLeft(s){
   if(s===undefined||s===null||s==='')return null;
   s=String(s).trim();
-  let mm,dd;
-  const m1=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
-  const m2=/^(\d{1,2})-(\d{1,2})$/.exec(s);
-  if(m1){mm=+m1[2];dd=+m1[3];}else if(m2){mm=+m2[1];dd=+m2[2];}else return null;
+  // 统一分隔符：10.1 / 10/1 / 10月1日 / 2025-10-01 → 10-1
+  s=s.replace(/[.\/]/g,'-').replace(/[年月]/g,'-').replace(/日/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+  const m=/^(\d{4})?-?(\d{1,2})-(\d{1,2})$/.exec(s);
+  if(!m)return null;
+  const mm=+m[2],dd=+m[3];
   if(mm<1||mm>12||dd<1||dd>31)return null;
   const today=new Date();today.setHours(0,0,0,0);
   const yr=today.getFullYear();
