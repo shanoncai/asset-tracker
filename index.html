@@ -166,16 +166,19 @@ table.asset tfoot td.num{text-align:center;}
 /* 买单表：单元格级列宽（iOS Safari 不读 colgroup）+ 紧凑字号，手机整屏可见 */
 table.asset.maidan{font-size:11px;}
 table.asset.maidan thead th,table.asset.maidan tbody td,table.asset.maidan tfoot td{padding:0 1px;}
-table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:30px}
-table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:26px}
-table.asset.maidan th:nth-child(3),table.asset.maidan td:nth-child(3){min-width:28px}
-table.asset.maidan th:nth-child(4),table.asset.maidan td:nth-child(4){min-width:30px}
-table.asset.maidan th:nth-child(5),table.asset.maidan td:nth-child(5){min-width:36px}
-table.asset.maidan th:nth-child(6),table.asset.maidan td:nth-child(6){min-width:40px}
-table.asset.maidan th:nth-child(7),table.asset.maidan td:nth-child(7){min-width:42px}
-table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:38px}
-table.asset.maidan th:nth-child(9),table.asset.maidan td:nth-child(9){min-width:34px}
-table.asset.maidan th:nth-child(10),table.asset.maidan td:nth-child(10){min-width:26px;width:26px}
+table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:38px}
+table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:38px}
+table.asset.maidan th:nth-child(3),table.asset.maidan td:nth-child(3){min-width:46px}
+table.asset.maidan th:nth-child(4),table.asset.maidan td:nth-child(4){min-width:42px}
+table.asset.maidan th:nth-child(5),table.asset.maidan td:nth-child(5){min-width:52px}
+table.asset.maidan th:nth-child(6),table.asset.maidan td:nth-child(6){min-width:44px}
+table.asset.maidan th:nth-child(7),table.asset.maidan td:nth-child(7){min-width:46px}
+table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:28px;width:28px}
+.maidan-config{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 8px;background:var(--color-surface);border:1px solid var(--color-border);border-bottom:none;border-radius:8px 8px 0 0;}
+.maidan-config .cfg-item{display:flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap;}
+.maidan-config .cfg-item span{color:var(--color-ink);}
+.maidan-config .cfg-input{width:60px;font-size:13px;padding:3px 4px;text-align:right;border:1px solid var(--color-border-strong);border-radius:6px;background:#fff;color:var(--color-ink);}
+.maidan-config .cfg-input:focus{outline:2px solid var(--color-primary);}
 </style>
 
 <!-- PWA / iOS standalone (添加到主屏幕当 App 用) -->
@@ -188,7 +191,7 @@ table.asset.maidan th:nth-child(10),table.asset.maidan td:nth-child(10){min-widt
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v52</div>
+<div class="ver-tag" id="verTag">v53</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -246,18 +249,17 @@ const FIELDS=[
 ];
 
 // 买单表独立字段（不与会员表共用全局 FIELDS）
+// 折扣/打折券/手续费率 改为整表级 config（顶部一行），不放逐行
 const MAIDAN_FIELDS=[
   {key:'原价',label:'原价',type:'money',align:'right'},
   {key:'酒水',label:'酒水',type:'money',align:'right'},
-  {key:'折扣',label:'折扣',type:'discount',align:'right'},
-  {key:'打折券',label:'打折券',type:'num',align:'right'},
-  {key:'手续费率',label:'手续费率',type:'pct',align:'right'},
   {key:'实付',label:'实付',type:'money',align:'right',compute:true},
+  {key:'手续费',label:'手续费',type:'money',align:'right',compute:true},
   {key:'无手续费',label:'无手续费',type:'money',align:'right',compute:true},
   {key:'最终折扣',label:'最终折扣',type:'pct',align:'right',compute:true},
   {key:'利润',label:'利润',type:'money',align:'right',compute:true},
 ];
-const MAIDAN_COLS=[30,26,28,30,36,40,42,38,34];
+const MAIDAN_COLS=[38,38,46,42,52,44,46];
 function blankMaidanRow(){const row={};MAIDAN_FIELDS.forEach(f=>{row[f.key]='';});return row;}
 
 let state=load()||defaultState();
@@ -277,21 +279,24 @@ function activeWs(){return state.worksheets.find(w=>w.id===state.activeWsId)||st
 function af(){return activeWs().fields||FIELDS;} // 当前表字段（买单表用自身字段，其余回退全局 FIELDS）
 function fmtAmt(n){return (Math.round((Number(n)||0)*100)/100).toFixed(2);}
 function calcMaidan(r){
-  const yuanRaw=r['原价'], zkRaw=r['折扣'];
-  const yuan=Number(yuanRaw)||0,jiu=Number(r['酒水'])||0,zk=Number(zkRaw)||0;
-  const coupon=Number(r['打折券'])||0,rate=Number(r['手续费率'])||0;
+  const ws=activeWs();const cfg=(ws&&ws.config)||{};
+  const zkRaw=cfg['折扣'], couponRaw=cfg['打折券'], rateRaw=cfg['手续费率'];
+  const yuanRaw=r['原价'], jiuRaw=r['酒水'];
+  const yuan=Number(yuanRaw)||0,jiu=Number(jiuRaw)||0,zk=Number(zkRaw)||0;
+  const coupon=Number(couponRaw)||0,rate=Number(rateRaw)||0;
   // 关键参数未填（全新材料空行）时计算列留空，由用户手动录入
   if(yuanRaw===''||yuanRaw==null||zkRaw===''||zkRaw==null||yuan<=0||zk<=0){
     return {incomplete:true,zhehou:0,fee:0,noFee:0,shifu:0,finalDisc:0,cost:0,profit:0};
   }
   const zhehou=(yuan-jiu)*zk;   // 折后菜品（酒水不打折）
   const base=zhehou+jiu;        // 含酒水小计 = 平台费基数
-  const fee=base*rate/100;      // 平台手续费（手续费率按百分比：填 0.6 表示 0.6%）
-  const noFee=zhehou+jiu+coupon;// 无手续费付款金额
-  const shifu=noFee+fee;        // 实付
-  const finalDisc=shifu/yuan;   // 最终折扣 = 实付/原价
-  const cost=base*0.9;          // 成本 = 折扣后餐费(我最后支付的金额)×0.9
-  const profit=noFee-cost-coupon; // 利润 = 无手续费 − 成本 − 打折券成本
+  const feeRaw=base*rate/100;   // 平台手续费（手续费率按百分比：填 0.6 表示 0.6%）
+  const noFee=Math.ceil(base+coupon);   // 无手续费：向上取整到个位
+  const fee=Math.ceil(feeRaw);          // 手续费：向上取整到个位
+  const shifu=noFee+fee;                // 实付 = 无手续费 + 手续费（整）
+  const finalDisc=yuan?shifu/yuan:0;    // 最终折扣 = 实付/原价
+  const cost=base*0.9;                  // 成本 = 折扣后餐费(我最后支付的金额)×0.9
+  const profit=Math.round(noFee-cost-coupon); // 利润：四舍五入取整（= 无手续费 − 成本 − 打折券成本）
   return {incomplete:false,zhehou,fee,noFee,shifu,finalDisc,cost,profit};
 }
 function colWFor(ws,i){
@@ -314,7 +319,7 @@ function defaultState(){
     {微信:'小美',登录:'',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:'0',余额:66,生日:'09-09',生日券:0,保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
     {微信:'大壮',登录:'',排队券:0,'85券':1,券码:'',积分:3100,买单:'4',余额:0,生日:'01-05',生日券:0,保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
   ]};
-  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]};
+  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',打折券:25,手续费率:0.6},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]};
   return {worksheets:[ws1,ws2,ws3],activeWsId:ws1.id,lastClearMonth:monthKey(new Date())};
 }
 
@@ -322,29 +327,28 @@ function load(){
   try{const s=localStorage.getItem(STORAGE_KEY);if(!s)return null;const o=JSON.parse(s);
     if(!o.worksheets||!o.worksheets.length)return null;
     if(!o.lastClearMonth)o.lastClearMonth=monthKey(new Date());
-    // 迁移：买单表字段兼容 + 强制收窄列宽（不改动任何已填数据）
+    // 迁移：买单表结构升级（折扣/打折券/手续费率 移到整表级 config，逐列改为 手续费）
     o.worksheets.forEach(ws=>{
       if(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价'){
-        const keys=ws.fields.map(f=>f.key);
-        // 兼容旧数据：85券 → 打折券（仅买单表，不动会员表的 85券 列）
-        if(keys.includes('85券')){
-          ws.fields.forEach(f=>{if(f.key==='85券'){f.key='打折券';f.label='打折券';}});
-          (ws.rows||[]).forEach(r=>{if(r&&('85券' in r)){r['打折券']=r['85券'];delete r['85券'];}});
-        }
-        if(!keys.includes('最终折扣'))ws.fields.push({key:'最终折扣',label:'最终折扣',type:'pct',align:'right',compute:true});
-        if(!keys.includes('利润'))ws.fields.push({key:'利润',label:'利润',type:'money',align:'right',compute:true});
-        ws.colWidths=MAIDAN_COLS.slice(); // 强制收窄列宽，手机整屏可见
+        const rd=ws.rowDefaults||{}; const fr=(ws.rows&&ws.rows[0])||{};
+        const pick=(k,d)=> (rd[k]!=null?rd[k]:(fr[k]!=null?fr[k]:d));
+        ws.config={折扣:pick('折扣','0.85'),打折券:pick('打折券',25),手续费率:pick('手续费率',0.6)};
+        const KEEP=['原价','酒水']; const DROP=['折扣','打折券','85券','手续费率','实付','无手续费','最终折扣','利润','手续费'];
+        (ws.rows||[]).forEach(r=>{ if(!r)return; const nr={}; KEEP.forEach(k=>nr[k]=(r[k]!=null?r[k]:'')); DROP.forEach(k=>delete r[k]); Object.assign(r,nr); });
+        ws.fields=MAIDAN_FIELDS.slice();
+        ws.colWidths=MAIDAN_COLS.slice();
       }
     });
     // 确保「买单」表存在且至少有一行可填（全新空表也保证可录入，不改动已有数据）
     const maidan=o.worksheets.filter(ws=>ws.name==='买单');
     if(maidan.length===0){
-      o.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]});
+      o.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',打折券:25,手续费率:0.6},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]});
     }else{
       if(maidan.length>1){ // 清理重复的买单表，保留数据最多的那张
         maidan.sort((a,b)=>b.rows.length-a.rows.length);
         maidan.slice(1).forEach(ws=>{const i=o.worksheets.indexOf(ws);if(i>=0)o.worksheets.splice(i,1);});
       }
+      if(!maidan[0].config)maidan[0].config={折扣:'0.85',打折券:25,手续费率:0.6};
       if(maidan[0].rows.length===0)maidan[0].rows.push(blankMaidanRow());
     }
     return o;}catch(e){return null;}
@@ -409,6 +413,11 @@ function renderTabs(){
   el.innerHTML=h;
 }
 
+function renderMaidanConfig(ws){
+  const cfg=ws.config||{};
+  const item=(k,label,ph)=>`<label class="cfg-item"><span>${label}</span><input class="cfg-input" data-key="${k}" type="number" step="0.01" inputmode="decimal" value="${escapeHtml(cfg[k]==null?'':cfg[k])}" placeholder="${ph||''}"></label>`;
+  return `<div class="maidan-config">${item('折扣','折扣','0.85=85折')}${item('打折券','打折券','')}${item('手续费率','手续费率','0.6=0.6%')}</div>`;
+}
 function renderTable(){
   const ws=activeWs();
   let rows=ws.rows.slice();
@@ -425,6 +434,7 @@ function renderTable(){
   const sumBirthday=rows.reduce((s,r)=>s+(Number(r['生日券'])||0),0);
   const sumWx=rows.reduce((s,r)=>s+((r['微信']===''||r['微信']==null)?0:1),0);
   const sumShifu=rows.reduce((s,r)=>s+calcMaidan(r).shifu,0);
+  const sumFee=rows.reduce((s,r)=>s+calcMaidan(r).fee,0);
   const sumNoFee=rows.reduce((s,r)=>s+calcMaidan(r).noFee,0);
   const sumProfit=rows.reduce((s,r)=>s+calcMaidan(r).profit,0);
 
@@ -455,16 +465,18 @@ function renderTable(){
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
     else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
-    else if(f.key==='实付')foot+=`<td class="num">${fmtAmt(sumShifu)}</td>`;
-    else if(f.key==='无手续费')foot+=`<td class="num">${fmtAmt(sumNoFee)}</td>`;
-    else if(f.key==='利润')foot+=`<td class="num">${fmtAmt(sumProfit)}</td>`;
+    else if(f.key==='实付')foot+=`<td class="num">${fmtMoney(sumShifu)}</td>`;
+    else if(f.key==='手续费')foot+=`<td class="num">${fmtMoney(sumFee)}</td>`;
+    else if(f.key==='无手续费')foot+=`<td class="num">${fmtMoney(sumNoFee)}</td>`;
+    else if(f.key==='利润')foot+=`<td class="num">${fmtMoney(sumProfit)}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
     else if(f.key==='登录')foot+=`<td class="col-login"></td>`;
     else foot+=`<td></td>`;
   });
   foot+='<td></td></tr></tfoot>';
 
-  document.getElementById('tableMount').innerHTML='<table class="asset'+(isMaidan?' maidan':'')+'">'+head+body+foot+'</table>';
+  const cfgBar=isMaidan?renderMaidanConfig(ws):'';
+  document.getElementById('tableMount').innerHTML=cfgBar+'<table class="asset'+(isMaidan?' maidan':'')+'">'+head+body+foot+'</table>';
   const subEl=document.getElementById('subInfo');
   if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
   applySelection();
@@ -483,10 +495,11 @@ function cellHtml(f,r,oi){
   if(f.compute){
     const c=calcMaidan(r);let val='';
     if(!c.incomplete){
-      if(f.key==='实付')val=fmtAmt(c.shifu);
-      else if(f.key==='无手续费')val=fmtAmt(c.noFee);
+      if(f.key==='实付')val=fmtMoney(c.shifu);
+      else if(f.key==='手续费')val=fmtMoney(c.fee);
+      else if(f.key==='无手续费')val=fmtMoney(c.noFee);
       else if(f.key==='最终折扣')val=(c.finalDisc*100).toFixed(1)+'%';
-      else if(f.key==='利润')val=fmtAmt(c.profit);
+      else if(f.key==='利润')val=fmtMoney(c.profit);
     }
     return `<td class="num" ${attr}>${val}</td>`;
   }
@@ -648,6 +661,11 @@ document.getElementById('tableMount').addEventListener('click',e=>{
   if(tr && !touchMoved){ const i=+tr.dataset.i; if(i===selOi){selOi=null;applySelection();} }
   touchMoved=false;
 });
+// 买单表顶部 config（折扣/打折券/手续费率）编辑：失焦后写入并整表重算
+document.getElementById('tableMount').addEventListener('change',e=>{
+  const ci=e.target.closest('.cfg-input');
+  if(ci){const ws=activeWs();const k=ci.dataset.key;const v=ci.value.trim();ws.config=ws.config||{};ws.config[k]=v===''?'':(Number(v)||0);save();renderTable();}
+});
 // 区分「点」与「横滑」：横滑查看时不触发选中
 let touchMoved=false, _tsX=0, _tsY=0;
 const _tm=document.getElementById('tableMount');
@@ -692,7 +710,7 @@ tableMountEl.addEventListener('touchstart',startResize,{passive:false});
 let modalMode='add',modalIndex=-1;
 function fieldInput(f,val,row){
   const id='f_'+f.key;
-  if(f.compute){const c=calcMaidan(row);let v='';if(!c.incomplete){if(f.key==='实付')v=fmtAmt(c.shifu);else if(f.key==='无手续费')v=fmtAmt(c.noFee);else if(f.key==='最终折扣')v=(c.finalDisc*100).toFixed(1)+'%';else if(f.key==='利润')v=fmtAmt(c.profit);}return `<label class="fld"><span>${f.label}</span><input id="${id}" type="text" readonly value="${v}"></label>`;}
+  if(f.compute){const c=calcMaidan(row);let v='';if(!c.incomplete){if(f.key==='实付')v=fmtMoney(c.shifu);else if(f.key==='手续费')v=fmtMoney(c.fee);else if(f.key==='无手续费')v=fmtMoney(c.noFee);else if(f.key==='最终折扣')v=(c.finalDisc*100).toFixed(1)+'%';else if(f.key==='利润')v=fmtMoney(c.profit);}return `<label class="fld"><span>${f.label}</span><input id="${id}" type="text" readonly value="${v}"></label>`;}
   if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option value="" ${val===''?'selected':''}>（未填）</option><option ${val==='主卡'?'selected':''}>主卡</option><option ${val==='副卡'?'selected':''}>副卡</option></select></label>`;}
   const type=(f.type==='num'||f.type==='points'||f.type==='money'||f.type==='discount'||f.type==='pct')?'number':'text';
   const step='step="1"';
