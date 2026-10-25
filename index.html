@@ -79,7 +79,7 @@ table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tf
 
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
-table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:auto;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+table.asset{width:auto;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;table-layout:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation;}
 table.asset thead th{position:sticky;top:0;z-index:2;background:var(--color-gray-100);color:var(--color-gray-700);font-weight:600;text-align:center;padding:0 5px;height:24px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border-strong);user-select:none;}
 table.asset thead th.sortable{cursor:pointer;}
 table.asset thead th:hover{background:#e9edf2;}
@@ -191,7 +191,7 @@ table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v54</div>
+<div class="ver-tag" id="verTag">v55</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -685,6 +685,7 @@ document.getElementById('btnUndo').addEventListener('click',undo);
 document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-1));
 
 document.getElementById('tableMount').addEventListener('click',e=>{
+  if(_justCellLong){_justCellLong=false;e.preventDefault();e.stopPropagation();return;}
   const th=e.target.closest('th[data-key]');
   if(th && !e.target.closest('.resizer')){ if(th.dataset.key==='积分')toggleSort('积分'); return; }
   const delBtn=e.target.closest('[data-act="delrow"]');
@@ -708,9 +709,33 @@ document.getElementById('tableMount').addEventListener('input',e=>{
 });
 // 区分「点」与「横滑」：横滑查看时不触发选中
 let touchMoved=false, _tsX=0, _tsY=0;
+let _justCellLong=false;     // 长按单元格进入编辑的防抖标记（避免随后合成的 click 误触发选中/公式）
+let _cellLongTimer=null,_cellLongArmed=false;
 const _tm=document.getElementById('tableMount');
-_tm.addEventListener('touchstart',e=>{const t=e.touches[0];_tsX=t.clientX;_tsY=t.clientY;touchMoved=false;},{passive:true});
-_tm.addEventListener('touchmove',e=>{const t=e.touches[0];if(t&&(Math.abs(t.clientX-_tsX)>10||Math.abs(t.clientY-_tsY)>10))touchMoved=true;},{passive:true});
+_tm.addEventListener('touchstart',e=>{
+  const t=e.touches[0];_tsX=t.clientX;_tsY=t.clientY;touchMoved=false;_cellLongArmed=false;
+  const cell=e.target.closest('td[data-key]');
+  if(cell && !e.target.closest('.resizer') && !e.target.closest('.cfg-input') && !e.target.closest('.row-edit')){
+    _cellLongTimer=setTimeout(()=>{_cellLongArmed=true;if(navigator.vibrate)navigator.vibrate(10);},500);
+  }
+},{passive:true});
+_tm.addEventListener('touchmove',e=>{
+  const t=e.touches[0];
+  if(t&&(Math.abs(t.clientX-_tsX)>10||Math.abs(t.clientY-_tsY)>10)){touchMoved=true;if(_cellLongTimer){clearTimeout(_cellLongTimer);_cellLongTimer=null;_cellLongArmed=false;}}
+},{passive:true});
+// 手机长按单元格 → 进入就地编辑（计算列则弹出公式预览）；在 touchend（用户手势内）触发，确保 iOS 能唤起键盘
+_tm.addEventListener('touchend',e=>{
+  if(_cellLongTimer){clearTimeout(_cellLongTimer);_cellLongTimer=null;}
+  if(_cellLongArmed){
+    _cellLongArmed=false;_justCellLong=true;
+    const cell=e.target.closest('td[data-key]');
+    if(cell){const i=+cell.dataset.i,key=cell.dataset.key;const ws=activeWs();const f=af().find(x=>x.key===key);
+      if(f&&f.compute){if(i>=0&&i<ws.rows.length)openFormula(i);}
+      else startCellEdit(cell,i,key);
+    }
+    setTimeout(()=>{_justCellLong=false;},400);
+  }
+},{passive:true});
 // 双击单元格进入就地编辑（单击只用于排序/删除）
 document.getElementById('tableMount').addEventListener('dblclick',e=>{
   const cell=e.target.closest('td[data-key]');
