@@ -99,6 +99,7 @@ td.num{text-align:center;font-weight:550;}
 .cell-editor[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .cell-editor[type=number]::-webkit-inner-spin-button,.cell-editor[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0;}
 td.num.zero-q{background:#cdd2d9;color:#5b626b;}
+table.asset tbody td.hl-shifu{background:#ffd43b !important;color:#5b4700;font-weight:700;border-radius:4px;}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
 .cell-text{display:inline-block;white-space:nowrap;vertical-align:middle;}
@@ -349,7 +350,7 @@ function calcNewMaidan(r, bi){
   const fee=Math.round(shifu*rate/100*100)/100;
   const disc=yuan?shifu/yuan:0;
   const cost=(yuan-face)*0.91+couponCost;
-  const profit=shifu-fee;
+  const profit=shifu-fee-cost;   // 利润：实付 − 手续费 − 成本
   return {incomplete:false,shifu,fee,disc,cost,profit};
 }
 // 计算列单元格文本（cellHtml 与刷新重算共用，避免重复逻辑）
@@ -632,7 +633,8 @@ function applySelection(){
 function cellHtml(f,r,oi,tbl){
   const v=r[f.key];const attr=`data-i="${oi}" data-key="${f.key}" data-tbl="${tbl}"`;
   if(f.compute){
-    return `<td class="num" ${attr}>${cellComputeText(f,r,tbl)}</td>`;
+    const hl=(f.key==='实付')?' hl-shifu':'';   // 实付结果单元格黄色高亮
+    return `<td class="num${hl}" ${attr}>${cellComputeText(f,r,tbl)}</td>`;
   }
   if(f.type==='discount'){
     const n=Number(v)||0;const empty=(v===''||v==null);
@@ -795,8 +797,9 @@ document.getElementById('tableMount').addEventListener('click',e=>{
   const calcCell=e.target.closest('td[data-key]');
   if(calcCell){
     const ws=activeWs();const isMaidan=(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价');
-    const f=af().find(x=>x.key===calcCell.dataset.key);
-    if(isMaidan&&f&&f.compute){const i=+calcCell.dataset.i;const tbl=+calcCell.dataset.tbl||0;const arr=(tbl===0)?ws.rows:ws.newBlocks[tbl-1].rows;if(i>=0&&i<arr.length){openFormula(i,tbl);return;}}
+    const tbl0=+calcCell.dataset.tbl||0;
+    const f=((tbl0===0)?ws.fields:ws.fields2).find(x=>x.key===calcCell.dataset.key);
+    if(isMaidan&&f&&f.compute){const i=+calcCell.dataset.i;const arr=(tbl0===0)?ws.rows:ws.newBlocks[tbl0-1].rows;if(i>=0&&i<arr.length){openFormula(i,tbl0);return;}}
   }
   // 选中整行：点同行取消，点其他行保持原选中（横滑不误触）
   const tr=e.target.closest('tbody tr');
@@ -833,7 +836,7 @@ _tm.addEventListener('touchend',e=>{
   if(_cellLongArmed){
     _cellLongArmed=false;_justCellLong=true;
     const cell=e.target.closest('td[data-key]');
-    if(cell){const i=+cell.dataset.i,key=cell.dataset.key,tbl=+cell.dataset.tbl||0;const ws=activeWs();const f=af().find(x=>x.key===key);
+    if(cell){const i=+cell.dataset.i,key=cell.dataset.key,tbl=+cell.dataset.tbl||0;const ws=activeWs();const f=((tbl===0)?ws.fields:ws.fields2).find(x=>x.key===key);
       if(f&&f.compute){const arr=(tbl===0)?ws.rows:ws.newBlocks[tbl-1].rows;if(i>=0&&i<arr.length)openFormula(i,tbl);}
       else startCellEdit(cell,i,key,tbl);
     }
@@ -912,7 +915,7 @@ function openFormula(i,tbl){
         ['手续费','实付 × 费率%（保留两位小数）', `${fmt2(c.shifu)} × ${rate}% = ${fmt2(c.shifu*rate/100)} = ${fmt2(c.fee)}`],
         ['折扣','实付 ÷ 原价', `${fmt2(c.shifu)} ÷ ${yuan} = ${(c.disc*100).toFixed(1)}%`],
         ['成本','(原价 − 券面值) × 0.91 + 券成本', `(${yuan} − ${face}) × 0.91 + ${couponCost} = ${fmt2(c.cost)}`],
-        ['利润','实付 − 手续费', `${fmt2(c.shifu)} − ${fmt2(c.fee)} = ${fmt2(c.profit)}`],
+        ['利润','实付 − 手续费 − 成本', `${fmt2(c.shifu)} − ${fmt2(c.fee)} − ${fmt2(c.cost)} = ${fmt2(c.profit)}`],
       ];
       html=rows.map(([k,formula,calc])=>`<div class="fld"><span>${k}</span><div style="font-size:12px;color:var(--color-ink);font-family:'SFMono-Regular',Consolas,monospace;word-break:break-all;background:var(--color-gray-50);padding:6px 8px;border-radius:6px;border:1px solid var(--color-border)">${escapeHtml(calc)}</div><div style="font-size:11px;color:var(--color-gray-400)">${escapeHtml(formula)}</div></div>`).join('');
     }
