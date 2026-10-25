@@ -166,8 +166,11 @@ table.asset tfoot td.num{text-align:center;}
 /* 买单表：单元格级列宽（iOS Safari 不读 colgroup）+ 紧凑字号，手机整屏可见 */
 table.asset.maidan{font-size:11px;}
 table.asset.maidan thead th,table.asset.maidan tbody td,table.asset.maidan tfoot td{padding:0 1px;}
-table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:38px}
-table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:38px}
+table.asset.maidan thead th{height:40px;}
+table.asset.maidan tbody td{height:44px;}
+table.asset.maidan tfoot td{height:40px;}
+table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:60px}
+table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:52px}
 table.asset.maidan th:nth-child(3),table.asset.maidan td:nth-child(3){min-width:46px}
 table.asset.maidan th:nth-child(4),table.asset.maidan td:nth-child(4){min-width:42px}
 table.asset.maidan th:nth-child(5),table.asset.maidan td:nth-child(5){min-width:52px}
@@ -191,7 +194,7 @@ table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v55</div>
+<div class="ver-tag" id="verTag">v56</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -268,7 +271,7 @@ const MAIDAN_FIELDS=[
   {key:'最终折扣',label:'最终折扣',type:'pct',align:'right',compute:true},
   {key:'利润',label:'利润',type:'money',align:'right',compute:true},
 ];
-const MAIDAN_COLS=[38,38,46,42,52,44,46];
+const MAIDAN_COLS=[60,52,46,42,52,44,46];
 function blankMaidanRow(){const row={};MAIDAN_FIELDS.forEach(f=>{row[f.key]='';});return row;}
 
 let state=load()||defaultState();
@@ -301,7 +304,7 @@ function calcMaidan(r){
   const base=zhehou+jiu;        // 含酒水小计 = 平台费基数
   const feeRaw=base*rate/100;   // 平台手续费（手续费率按百分比：填 0.6 表示 0.6%）
   const noFee=Math.ceil(base+coupon);   // 无手续费：向上取整到个位
-  const fee=Math.ceil(feeRaw);          // 手续费：向上取整到个位
+  const fee=Math.round(feeRaw*100)/100;  // 手续费：保留两位小数（不向上取整）
   const shifu=noFee+fee;                // 实付 = 无手续费 + 手续费（整）
   const finalDisc=yuan?shifu/yuan:0;    // 最终折扣 = 实付/原价
   const cost=base*0.9;                  // 成本 = 折扣后餐费(我最后支付的金额)×0.9
@@ -312,8 +315,8 @@ function calcMaidan(r){
 function cellComputeText(f,r){
   const c=calcMaidan(r);
   if(c.incomplete)return '';
-  if(f.key==='实付')return fmtMoney(c.shifu);
-  if(f.key==='手续费')return fmtMoney(c.fee);
+  if(f.key==='实付')return fmt2(c.shifu);
+  if(f.key==='手续费')return fmt2(c.fee);
   if(f.key==='无手续费')return fmtMoney(c.noFee);
   if(f.key==='最终折扣')return (c.finalDisc*100).toFixed(1)+'%';
   if(f.key==='利润')return fmtMoney(c.profit);
@@ -486,8 +489,8 @@ function renderTable(){
     else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
     else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
     else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
-    else if(f.key==='实付')foot+=`<td class="num">${fmtMoney(sumShifu)}</td>`;
-    else if(f.key==='手续费')foot+=`<td class="num">${fmtMoney(sumFee)}</td>`;
+    else if(f.key==='实付')foot+=`<td class="num">${fmt2(sumShifu)}</td>`;
+    else if(f.key==='手续费')foot+=`<td class="num">${fmt2(sumFee)}</td>`;
     else if(f.key==='无手续费')foot+=`<td class="num">${fmtMoney(sumNoFee)}</td>`;
     else if(f.key==='利润')foot+=`<td class="num">${fmtMoney(sumProfit)}</td>`;
     else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
@@ -519,7 +522,7 @@ function refreshMaidanComputed(){
   if(foot){
     const sums={实付:0,手续费:0,无手续费:0,利润:0};
     ws.rows.forEach(r=>{const c=calcMaidan(r);sums.实付+=c.shifu;sums.手续费+=c.fee;sums.无手续费+=c.noFee;sums.利润+=c.profit;});
-    ws.fields.forEach((f,fi)=>{ if(sums[f.key]!=null&&foot.children[fi]) foot.children[fi].textContent=fmtMoney(sums[f.key]); });
+    ws.fields.forEach((f,fi)=>{ if(sums[f.key]!=null&&foot.children[fi]) foot.children[fi].textContent=(f.key==='实付'||f.key==='手续费')?fmt2(sums[f.key]):fmtMoney(sums[f.key]); });
   }
 }
 
@@ -775,7 +778,7 @@ tableMountEl.addEventListener('touchstart',startResize,{passive:false});
 let modalMode='add',modalIndex=-1;
 function fieldInput(f,val,row){
   const id='f_'+f.key;
-  if(f.compute){const c=calcMaidan(row);let v='';if(!c.incomplete){if(f.key==='实付')v=fmtMoney(c.shifu);else if(f.key==='手续费')v=fmtMoney(c.fee);else if(f.key==='无手续费')v=fmtMoney(c.noFee);else if(f.key==='最终折扣')v=(c.finalDisc*100).toFixed(1)+'%';else if(f.key==='利润')v=fmtMoney(c.profit);}return `<label class="fld"><span>${f.label}</span><input id="${id}" type="text" readonly value="${v}"></label>`;}
+  if(f.compute){const c=calcMaidan(row);let v='';if(!c.incomplete){if(f.key==='实付')v=fmt2(c.shifu);else if(f.key==='手续费')v=fmt2(c.fee);else if(f.key==='无手续费')v=fmtMoney(c.noFee);else if(f.key==='最终折扣')v=(c.finalDisc*100).toFixed(1)+'%';else if(f.key==='利润')v=fmtMoney(c.profit);}return `<label class="fld"><span>${f.label}</span><input id="${id}" type="text" readonly value="${v}"></label>`;}
   if(f.key==='主副卡'){return `<label class="fld"><span>${f.label}</span><select id="${id}"><option value="" ${val===''?'selected':''}>（未填）</option><option ${val==='主卡'?'selected':''}>主卡</option><option ${val==='副卡'?'selected':''}>副卡</option></select></label>`;}
   const type=(f.type==='num'||f.type==='points'||f.type==='money'||f.type==='discount'||f.type==='pct')?'number':'text';
   const step='step="1"';
@@ -805,9 +808,9 @@ function openFormula(i){
     const rows=[
       ['折扣后餐费', '(原价 − 酒水) × 折扣 + 酒水', `(${yuan} − ${jiu}) × ${zk} + ${jiu} = ${fmt2(c.zhehou)} + ${jiu} = ${fmt2(base)}`],
       ['无手续费', '⌈折扣后餐费 + 打折券⌉（向上取整）', `⌈${fmt2(base)} + ${coupon}⌉ = ${fmtMoney(c.noFee)}`],
-      ['手续费', '⌈折扣后餐费 × 手续费率%⌉（向上取整）', `⌈${fmt2(base)} × ${rate}%⌉ = ⌈${fmt2(base*rate/100)}⌉ = ${fmtMoney(c.fee)}`],
-      ['实付', '无手续费 + 手续费', `${fmtMoney(c.noFee)} + ${fmtMoney(c.fee)} = ${fmtMoney(c.shifu)}`],
-      ['最终折扣', '实付 ÷ 原价', `${fmtMoney(c.shifu)} ÷ ${yuan} = ${(c.finalDisc*100).toFixed(1)}%`],
+      ['手续费', '折扣后餐费 × 手续费率%（保留两位小数）', `${fmt2(base)} × ${rate}% = ${fmt2(base*rate/100)} = ${fmt2(c.fee)}`],
+      ['实付', '无手续费 + 手续费', `${fmtMoney(c.noFee)} + ${fmt2(c.fee)} = ${fmt2(c.shifu)}`],
+      ['最终折扣', '实付 ÷ 原价', `${fmt2(c.shifu)} ÷ ${yuan} = ${(c.finalDisc*100).toFixed(1)}%`],
       ['成本', '折扣后餐费 × 0.9', `${fmt2(base)} × 0.9 = ${fmt2(c.cost)}`],
       ['利润', '无手续费 − 成本 − 打折券（四舍五入）', `${fmtMoney(c.noFee)} − ${fmt2(c.cost)} − ${coupon} = ${fmtMoney(c.profit)}`],
     ];
