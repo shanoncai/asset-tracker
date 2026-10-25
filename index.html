@@ -183,7 +183,9 @@ table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:
 .maidan-config .cfg-input{width:60px;font-size:13px;padding:3px 4px;text-align:right;border:1px solid var(--color-border-strong);border-radius:6px;background:#fff;color:var(--color-ink);}
 .maidan-config .cfg-input:focus{outline:2px solid var(--color-primary);}
 .maidan-config .cfg-unit{margin-left:3px;font-size:12px;color:var(--color-gray-500);}
-.maidan-new-cfg .cfg-input[data-key="券面值"]{width:40px;}
+.maidan-new-cfg{flex-wrap:nowrap;gap:4px;overflow-x:auto;}
+.maidan-new-cfg .cfg-input{width:34px;padding:3px 2px;text-align:right;}
+.maidan-new-cfg .cfg-input[data-key="券面值"]{width:26px;}
 .maidan-block-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 2px 5px;}
 .maidan-block-title{font-size:12.5px;font-weight:600;color:var(--color-brand-dark);}
 table.asset.maidan-new{font-size:11px;}
@@ -211,7 +213,7 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v60</div>
+<div class="ver-tag" id="verTag">v61</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -566,7 +568,7 @@ function renderTable(){
 function renderMaidanNewConfig(ws){
   const cfg=ws.config2||{};
   const item=(k,label,ph,unit)=>`<label class="cfg-item"><span>${label}</span><input class="cfg-input" data-cfg="2" data-key="${k}" type="number" step="0.01" inputmode="decimal" value="${escapeHtml(cfg[k]==null?'':cfg[k])}" placeholder="${ph||''}">${unit?`<span class="cfg-unit">${unit}</span>`:''}</label>`;
-  return `<div class="maidan-config maidan-new-cfg">${item('券面值','券面值','')}${item('券成本','券成本','')}${item('优惠额','优惠额','')}${item('手续费率','手续费率','0.6=0.6%','%')}</div>`;
+  return `<div class="maidan-config maidan-new-cfg">${item('券面值','券面值','')}${item('券成本','券成本','')}${item('优惠额','优惠额','')}${item('手续费率','费率','0.6=0.6%','%')}</div>`;
 }
 function renderMaidanSecondTable(ws){
   const fields=ws.fields2, rows=ws.rows2, tbl=1;
@@ -589,7 +591,7 @@ function renderMaidanSecondTable(ws){
     else foot+='<td></td>';
   });
   foot+='<td></td></tr></tfoot>';
-  const head2=`<div class="maidan-block-head"><span class="maidan-block-title">新买单计算（券面值 / 券成本 / 优惠额 / 手续费率 整表共用，填一次即可）</span><button class="btn btn-sm btn-secondary" data-act="addnewrow">+ 新增一行</button></div>`;
+  const head2=`<div class="maidan-block-head"><span class="maidan-block-title">新买单计算（券面值 / 券成本 / 优惠额 / 费率 整表共用，填一次即可）</span><button class="btn btn-sm btn-secondary" data-act="addnewrow">+ 新增一行</button></div>`;
   return head2+cfgBar+'<table class="asset maidan-new">'+head+body+foot+'</table>';
 }
 
@@ -919,11 +921,11 @@ function openFormula(i,tbl){
     document.getElementById('formulaTitle').textContent='新买单计算 · 第 '+(i+1)+' 行';
     let html;
     if(c.incomplete){
-      html='<p style="margin:0;color:var(--color-gray-500)">本行「原价」未填写，计算列暂无数据。请先补全「原价」，并在上方券参数栏填好「优惠额 / 券面值 / 券成本 / 手续费率」。</p>';
+      html='<p style="margin:0;color:var(--color-gray-500)">本行「原价」未填写，计算列暂无数据。请先补全「原价」，并在上方券参数栏填好「优惠额 / 券面值 / 券成本 / 费率」。</p>';
     }else{
       const rows=[
         ['实付','原价 − 优惠额', `${yuan} − ${youhui} = ${fmt2(c.shifu)}`],
-        ['手续费','实付 × 手续费率%（保留两位小数）', `${fmt2(c.shifu)} × ${rate}% = ${fmt2(c.shifu*rate/100)} = ${fmt2(c.fee)}`],
+        ['手续费','实付 × 费率%（保留两位小数）', `${fmt2(c.shifu)} × ${rate}% = ${fmt2(c.shifu*rate/100)} = ${fmt2(c.fee)}`],
         ['折扣','实付 ÷ 原价', `${fmt2(c.shifu)} ÷ ${yuan} = ${(c.disc*100).toFixed(1)}%`],
         ['成本','(原价 − 券面值) × 0.91 + 券成本', `(${yuan} − ${face}) × 0.91 + ${couponCost} = ${fmt2(c.cost)}`],
         ['利润','实付 − 手续费', `${fmt2(c.shifu)} − ${fmt2(c.fee)} = ${fmt2(c.profit)}`],
