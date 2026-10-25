@@ -63,7 +63,7 @@ table.asset tfoot td.col-wx{position:sticky;left:0;z-index:6;background:var(--co
 table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tfoot td:first-child{padding-left:3px !important;padding-right:3px !important;}
 
 /* Action bar (bottom) */
-.action-bar{display:flex;align-items:center;gap:10px;height:auto;padding:12px 12px 4px;margin-top:12px;flex-wrap:wrap;}
+.action-bar{display:flex;align-items:center;gap:10px;height:auto;padding:12px 12px 4px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap;}
 .action-bar .spacer{flex:1;}
 .input{height:30px;padding:0 10px;font-size:12.5px;border-radius:7px;border:1px solid var(--color-border-strong);background:#fff;color:var(--color-ink);font-family:inherit;}
 .input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 3px rgba(99,91,255,.18);}
@@ -73,6 +73,8 @@ table.asset thead th:first-child,table.asset tbody td:first-child,table.asset tf
 .btn-primary:hover{background:var(--color-primary-hover);}
 .btn-secondary{background:#fff;color:var(--color-ink);border-color:var(--color-border-strong);}
 .btn-secondary:hover{background:var(--color-gray-100);}
+.btn-gear{height:24px;min-width:28px;padding:0 6px;border-radius:6px;font-size:15px;line-height:1;justify-content:center;color:var(--color-gray-600);background:transparent;border-color:transparent;box-shadow:none;}
+.btn-gear:hover{background:var(--color-gray-100);}
 
 /* Table */
 .table-wrap{width:100%;max-height:calc(100vh - 200px);overflow:auto;-webkit-overflow-scrolling:touch;background:var(--color-surface);border:1px solid var(--color-border);border-radius:10px;}
@@ -140,9 +142,9 @@ table.asset tfoot td.num{text-align:center;}
   .page-head{margin-bottom:8px;}
   .page-head h1{font-size:17px;}
   /* 底部操作栏：按钮占满宽度 */
-  .action-bar{margin-top:8px;gap:8px;padding:8px 4px 4px;}
+  .action-bar{margin-top:8px;gap:8px;padding:8px 4px 4px;justify-content:flex-end;}
   .action-bar .spacer{flex-basis:100%;height:0;margin:0;}
-  .action-bar .btn{height:32px;flex:1;justify-content:center;}
+  .action-bar .btn{flex:0 0 auto;height:24px;}
   /* 表格：强制最小宽度 → 横向滚动，不挤压不变卡片 */
   .table-wrap{max-height:calc(100vh - 150px);max-height:calc(100dvh - 150px);}
   table.asset{min-width:0;}
@@ -171,14 +173,12 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v45</div>
+<div class="ver-tag" id="verTag">v46</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
-    <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
-    <div class="spacer"></div>
-    <button class="btn btn-secondary" id="btnSettings">⚙ 设置</button>
+    <button class="btn btn-gear" id="btnSettings" title="设置" aria-label="设置">⚙</button>
     <input type="file" id="fileInput" accept="application/json,.json" style="display:none">
   </div>
 </div>
@@ -197,6 +197,7 @@ table.asset tfoot td.num{text-align:center;}
   <div class="modal">
     <h3>设置</h3>
     <div class="settings-list">
+      <button class="btn btn-primary" id="btnAdd">+ 新增账号</button>
       <button class="btn btn-secondary" id="btnUndo">↶ 撤销</button>
       <button class="btn btn-secondary" id="btnRefresh">刷新</button>
       <button class="btn btn-secondary" id="btnImport">导入</button>
