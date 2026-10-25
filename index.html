@@ -162,6 +162,20 @@ table.asset tfoot td.num{text-align:center;}
   .ws-tab{height:42px;font-size:14px;padding:0 32px;min-width:130px;} .ws-add{height:42px;font-size:14px;}
   .ws-rename-input{height:24px;font-size:14px;}
 }
+
+/* 买单表：单元格级列宽（iOS Safari 不读 colgroup）+ 紧凑字号，手机整屏可见 */
+table.asset.maidan{font-size:11px;}
+table.asset.maidan thead th,table.asset.maidan tbody td,table.asset.maidan tfoot td{padding:0 1px;}
+table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:30px}
+table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:26px}
+table.asset.maidan th:nth-child(3),table.asset.maidan td:nth-child(3){min-width:28px}
+table.asset.maidan th:nth-child(4),table.asset.maidan td:nth-child(4){min-width:30px}
+table.asset.maidan th:nth-child(5),table.asset.maidan td:nth-child(5){min-width:36px}
+table.asset.maidan th:nth-child(6),table.asset.maidan td:nth-child(6){min-width:40px}
+table.asset.maidan th:nth-child(7),table.asset.maidan td:nth-child(7){min-width:42px}
+table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:38px}
+table.asset.maidan th:nth-child(9),table.asset.maidan td:nth-child(9){min-width:34px}
+table.asset.maidan th:nth-child(10),table.asset.maidan td:nth-child(10){min-width:26px;width:26px}
 </style>
 
 <!-- PWA / iOS standalone (添加到主屏幕当 App 用) -->
@@ -174,7 +188,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v51</div>
+<div class="ver-tag" id="verTag">v52</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -236,14 +250,14 @@ const MAIDAN_FIELDS=[
   {key:'原价',label:'原价',type:'money',align:'right'},
   {key:'酒水',label:'酒水',type:'money',align:'right'},
   {key:'折扣',label:'折扣',type:'discount',align:'right'},
-  {key:'85券',label:'85券',type:'num',align:'right'},
+  {key:'打折券',label:'打折券',type:'num',align:'right'},
   {key:'手续费率',label:'手续费率',type:'pct',align:'right'},
   {key:'实付',label:'实付',type:'money',align:'right',compute:true},
   {key:'无手续费',label:'无手续费',type:'money',align:'right',compute:true},
   {key:'最终折扣',label:'最终折扣',type:'pct',align:'right',compute:true},
   {key:'利润',label:'利润',type:'money',align:'right',compute:true},
 ];
-const MAIDAN_COLS=[90,80,70,70,90,95,100,95,95];
+const MAIDAN_COLS=[30,26,28,30,36,40,42,38,34];
 function blankMaidanRow(){const row={};MAIDAN_FIELDS.forEach(f=>{row[f.key]='';});return row;}
 
 let state=load()||defaultState();
@@ -265,7 +279,7 @@ function fmtAmt(n){return (Math.round((Number(n)||0)*100)/100).toFixed(2);}
 function calcMaidan(r){
   const yuanRaw=r['原价'], zkRaw=r['折扣'];
   const yuan=Number(yuanRaw)||0,jiu=Number(r['酒水'])||0,zk=Number(zkRaw)||0;
-  const coupon=Number(r['85券'])||0,rate=Number(r['手续费率'])||0;
+  const coupon=Number(r['打折券'])||0,rate=Number(r['手续费率'])||0;
   // 关键参数未填（全新材料空行）时计算列留空，由用户手动录入
   if(yuanRaw===''||yuanRaw==null||zkRaw===''||zkRaw==null||yuan<=0||zk<=0){
     return {incomplete:true,zhehou:0,fee:0,noFee:0,shifu:0,finalDisc:0,cost:0,profit:0};
@@ -277,7 +291,7 @@ function calcMaidan(r){
   const shifu=noFee+fee;        // 实付
   const finalDisc=shifu/yuan;   // 最终折扣 = 实付/原价
   const cost=base*0.9;          // 成本 = 折扣后餐费(我最后支付的金额)×0.9
-  const profit=noFee-cost;      // 利润 = 无手续费 − 成本
+  const profit=noFee-cost-coupon; // 利润 = 无手续费 − 成本 − 打折券成本
   return {incomplete:false,zhehou,fee,noFee,shifu,finalDisc,cost,profit};
 }
 function colWFor(ws,i){
@@ -308,12 +322,18 @@ function load(){
   try{const s=localStorage.getItem(STORAGE_KEY);if(!s)return null;const o=JSON.parse(s);
     if(!o.worksheets||!o.worksheets.length)return null;
     if(!o.lastClearMonth)o.lastClearMonth=monthKey(new Date());
-    // 迁移：给已有「买单」表补齐 v48 新增的计算列（不改动任何已填数据）
+    // 迁移：买单表字段兼容 + 强制收窄列宽（不改动任何已填数据）
     o.worksheets.forEach(ws=>{
       if(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价'){
         const keys=ws.fields.map(f=>f.key);
+        // 兼容旧数据：85券 → 打折券（仅买单表，不动会员表的 85券 列）
+        if(keys.includes('85券')){
+          ws.fields.forEach(f=>{if(f.key==='85券'){f.key='打折券';f.label='打折券';}});
+          (ws.rows||[]).forEach(r=>{if(r&&('85券' in r)){r['打折券']=r['85券'];delete r['85券'];}});
+        }
         if(!keys.includes('最终折扣'))ws.fields.push({key:'最终折扣',label:'最终折扣',type:'pct',align:'right',compute:true});
         if(!keys.includes('利润'))ws.fields.push({key:'利润',label:'利润',type:'money',align:'right',compute:true});
+        ws.colWidths=MAIDAN_COLS.slice(); // 强制收窄列宽，手机整屏可见
       }
     });
     // 确保「买单」表存在且至少有一行可填（全新空表也保证可录入，不改动已有数据）
@@ -409,7 +429,7 @@ function renderTable(){
   const sumProfit=rows.reduce((s,r)=>s+calcMaidan(r).profit,0);
 
   // 表头（含列宽 colgroup + 排序指示 + 拖拽手柄 + 操作列）
-  const F=af(); const colgroup='<colgroup>'+F.map((f,i)=>`<col data-col="${i}" style="min-width:${colWFor(ws,i)}px">`).join('')+'<col style="width:40px"></colgroup>';
+  const F=af(); const isMaidan=(F[0]&&F[0].key==='原价'); const colgroup='<colgroup>'+F.map((f,i)=>`<col data-col="${i}" style="min-width:${colWFor(ws,i)}px">`).join('')+'<col style="width:40px"></colgroup>';
   let head=colgroup+'<thead><tr>'+F.map((f,i)=>{
     let ind='';
     if(ws.sort.key===f.key)ind=ws.sort.dir==='asc'?' ▲':' ▼';
@@ -444,7 +464,7 @@ function renderTable(){
   });
   foot+='<td></td></tr></tfoot>';
 
-  document.getElementById('tableMount').innerHTML='<table class="asset">'+head+body+foot+'</table>';
+  document.getElementById('tableMount').innerHTML='<table class="asset'+(isMaidan?' maidan':'')+'">'+head+body+foot+'</table>';
   const subEl=document.getElementById('subInfo');
   if(subEl)subEl.textContent='当前：'+ws.name+' · 共 '+ws.rows.length+' 个账号';
   applySelection();
