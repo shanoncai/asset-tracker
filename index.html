@@ -174,12 +174,11 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v50</div>
+<div class="ver-tag" id="verTag">v51</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
   <div class="action-bar">
-    <button class="btn btn-secondary btn-sm" id="btnNewMaidan">➕ 新建买单</button>
     <button class="btn btn-gear" id="btnSettings" title="设置" aria-label="设置">⚙</button>
     <input type="file" id="fileInput" accept="application/json,.json" style="display:none">
   </div>
@@ -245,6 +244,7 @@ const MAIDAN_FIELDS=[
   {key:'利润',label:'利润',type:'money',align:'right',compute:true},
 ];
 const MAIDAN_COLS=[90,80,70,70,90,95,100,95,95];
+function blankMaidanRow(){const row={};MAIDAN_FIELDS.forEach(f=>{row[f.key]='';});return row;}
 
 let state=load()||defaultState();
 
@@ -300,7 +300,7 @@ function defaultState(){
     {微信:'小美',登录:'',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:'0',余额:66,生日:'09-09',生日券:0,保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
     {微信:'大壮',登录:'',排队券:0,'85券':1,券码:'',积分:3100,买单:'4',余额:0,生日:'01-05',生日券:0,保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
   ]};
-  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[]};
+  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]};
   return {worksheets:[ws1,ws2,ws3],activeWsId:ws1.id,lastClearMonth:monthKey(new Date())};
 }
 
@@ -316,6 +316,17 @@ function load(){
         if(!keys.includes('利润'))ws.fields.push({key:'利润',label:'利润',type:'money',align:'right',compute:true});
       }
     });
+    // 确保「买单」表存在且至少有一行可填（全新空表也保证可录入，不改动已有数据）
+    const maidan=o.worksheets.filter(ws=>ws.name==='买单');
+    if(maidan.length===0){
+      o.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()]});
+    }else{
+      if(maidan.length>1){ // 清理重复的买单表，保留数据最多的那张
+        maidan.sort((a,b)=>b.rows.length-a.rows.length);
+        maidan.slice(1).forEach(ws=>{const i=o.worksheets.indexOf(ws);if(i>=0)o.worksheets.splice(i,1);});
+      }
+      if(maidan[0].rows.length===0)maidan[0].rows.push(blankMaidanRow());
+    }
     return o;}catch(e){return null;}
 }
 function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
@@ -768,11 +779,6 @@ function importData(file){
 document.getElementById('btnExport').addEventListener('click',exportData);
 document.getElementById('btnImport').addEventListener('click',()=>document.getElementById('fileInput').click());
 document.getElementById('fileInput').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)importData(f);e.target.value='';});
-document.getElementById('btnNewMaidan').addEventListener('click',()=>{
-  snapshot();
-  state.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),rowDefaults:{},sort:{key:null,dir:null},rows:[]});
-  save();renderTabs();renderTable();toast('已新建空白「买单」工作表，参数请手动录入');
-});
 
 // ---- Init ----
 checkClearOnLoad();
