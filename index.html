@@ -168,7 +168,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v42</div>
+<div class="ver-tag" id="verTag">v43</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -291,10 +291,14 @@ function birthdayDaysLeft(s){
   if(mm<1||mm>12||dd<1||dd>31)return null;
   const today=new Date();today.setHours(0,0,0,0);
   const yr=today.getFullYear();
-  let b=new Date(yr,mm-1,dd);
-  let diff=Math.round((b-today)/86400000);
-  if(diff<0){b=new Date(yr+1,mm-1,dd);diff=Math.round((b-today)/86400000);}
-  return diff;
+  // 取今年/明年/去年中"离今天最近的那个生日"，返回有符号天数（负=已过的生日距今天数）
+  let best=null;
+  [yr,yr+1,yr-1].forEach(y=>{
+    const b=new Date(y,mm-1,dd);
+    const d=Math.round((b-today)/86400000);
+    if(best===null||Math.abs(d)<Math.abs(best))best=d;
+  });
+  return best;
 }
 function sortType(f){return (f.type==='num'||f.type==='points'||f.type==='money')?'num':'text';}
 
@@ -379,7 +383,7 @@ function cellHtml(f,r,oi){
     const bvNum=(bv===''||bv==null)?null:Number(bv);
     const bvNonZero=bvNum!==null&&bvNum!==0;
     const dLeft=birthdayDaysLeft(r['生日']);
-    const within30=dLeft!==null&&dLeft>=0&&dLeft<=30;
+    const within30=dLeft!==null&&Math.abs(dLeft)<=30;
     const isMain=r['主副卡']==='主卡';
     const hi=bvNonZero&&within30&&isMain; // 生日券非0非空 + 生日前30天内(含) + 主卡
     const gray=r['等级']!=='肚神';
