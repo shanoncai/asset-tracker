@@ -265,7 +265,7 @@ function calcMaidan(r){
   const coupon=Number(r['85券'])||0,rate=Number(r['手续费率'])||0;
   const zhehou=(yuan-jiu)*zk;   // 折后菜品（酒水不打折）
   const base=zhehou+jiu;        // 含酒水小计 = 平台费基数
-  const fee=base*rate;          // 平台手续费
+  const fee=base*rate/100;      // 平台手续费（手续费率按百分比：填 0.6 表示 0.6%）
   const noFee=zhehou+jiu+coupon;// 无手续费付款金额
   const shifu=noFee+fee;        // 实付
   return {zhehou,fee,noFee,shifu};
