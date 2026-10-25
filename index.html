@@ -85,7 +85,6 @@ table.asset thead th.sortable{cursor:pointer;}
 table.asset thead th:hover{background:#e9edf2;}
 table.asset thead th .sort-ind{color:var(--color-primary);margin-left:3px;font-size:10px;}
 table.asset thead th .resizer{position:absolute;right:0;top:0;height:100%;width:8px;cursor:col-resize;z-index:4;touch-action:none;}
-table.asset thead th .resizer:hover{background:var(--color-primary);opacity:.25;}
 table.asset tbody td{padding:0 5px;height:22px;vertical-align:middle;white-space:nowrap;border-bottom:1px solid var(--color-border);color:var(--color-ink);}
 table.asset tbody tr.selected td{background:rgba(99,91,255,.13);box-shadow:inset 3px 0 0 var(--color-primary);}
 table.asset tbody tr.selected td:first-child{border-top-left-radius:4px;border-bottom-left-radius:4px;}
@@ -168,7 +167,6 @@ table.asset.maidan{font-size:11px;}
 table.asset.maidan thead th,table.asset.maidan tbody td,table.asset.maidan tfoot td{padding:0 1px;}
 table.asset.maidan thead th{height:40px;}
 table.asset.maidan tbody td{height:44px;}
-table.asset.maidan tfoot td{height:40px;}
 table.asset.maidan th:nth-child(1),table.asset.maidan td:nth-child(1){min-width:60px}
 table.asset.maidan th:nth-child(2),table.asset.maidan td:nth-child(2){min-width:52px}
 table.asset.maidan th:nth-child(3),table.asset.maidan td:nth-child(3){min-width:46px}
@@ -186,13 +184,10 @@ table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:
 .maidan-new-cfg{flex-wrap:nowrap;gap:4px;overflow-x:auto;}
 .maidan-new-cfg .cfg-input{width:34px;padding:3px 2px;text-align:right;}
 .maidan-new-cfg .cfg-input[data-key="券面值"]{width:26px;}
-.maidan-block-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 2px 5px;}
-.maidan-block-title{font-size:12.5px;font-weight:600;color:var(--color-brand-dark);}
 table.asset.maidan-new{font-size:11px;}
 table.asset.maidan-new thead th,table.asset.maidan-new tbody td,table.asset.maidan-new tfoot td{padding:0 1px;}
 table.asset.maidan-new thead th{height:40px;}
 table.asset.maidan-new tbody td{height:44px;}
-table.asset.maidan-new tfoot td{height:40px;}
 table.asset.maidan-new th:nth-child(1),table.asset.maidan-new td:nth-child(1){min-width:60px}
 table.asset.maidan-new th:nth-child(2),table.asset.maidan-new td:nth-child(2){min-width:56px}
 table.asset.maidan-new th:nth-child(3),table.asset.maidan-new td:nth-child(3){min-width:56px}
@@ -209,8 +204,8 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="巴奴会员">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY5Y+36Jma5ouf6LWE5Lqn77yI56ev5YiGIC8g5Yi456CBIC8g5L2Z6aKd77yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLiIsInNjb3BlIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwib3JpZW50YXRpb24iOiJhbnkiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZhZmJmYyIsInRoZW1lX2NvbG9yIjoiIzYzNWJmZiIsImljb25zIjpbeyJzcmMiOiJpY29uLnBuZyIsInNpemVzIjoiMTgweDE4MCIsInR5cGUiOiJpbWFnZS9wbmciLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn1dfQ==">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY5Y+36Jma5ouf6LWE5Lqn77yI56ev5YiGIC8g5Yi456CKIC8g5L2Z6aKd77yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLiIsInNjb3BlIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwib3JpZW50YXRpb24iOiJhbnkiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZhZmJmYyIsInRoZW1lX2NvbG9yIjoiIzYzNWJmZiIsImljb25zIjpbeyJzcmMiOiJpY29uLnBuZyIsInNpemVzIjoiMTgweDE4MCIsInR5cGUiOiJpbWFnZS9wbmciLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn1dfQ==">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
 <div class="ver-tag" id="verTag">v61</div>
@@ -537,23 +532,26 @@ function renderTable(){
   });
   body+='</tbody>';
 
-  // 合计行（积分/余额/排队券/生日券求和，微信列统计个数，操作列留空）
-  let foot='<tfoot><tr>';
-  F.forEach(f=>{
-    if(f.key==='微信')foot+=`<td class="num">${sumWx}</td>`;
-    else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
-    else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
-    else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
-    else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
-    else if(f.key==='实付')foot+=`<td class="num">${fmt2(sumShifu)}</td>`;
-    else if(f.key==='手续费')foot+=`<td class="num">${fmt2(sumFee)}</td>`;
-    else if(f.key==='无手续费')foot+=`<td class="num">${fmtMoney(sumNoFee)}</td>`;
-    else if(f.key==='利润')foot+=`<td class="num">${fmtMoney(sumProfit)}</td>`;
-    else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
-    else if(f.key==='登录')foot+=`<td class="col-login"></td>`;
-    else foot+=`<td></td>`;
-  });
-  foot+='<td></td></tr></tfoot>';
+  // 合计行：仅非买单表显示（会员主表汇总 积分/余额/排队券/生日券、微信计数）；买单表不显示灰色合计行
+  let foot='';
+  if(!isMaidan){
+    foot='<tfoot><tr>';
+    F.forEach(f=>{
+      if(f.key==='微信')foot+=`<td class="num">${sumWx}</td>`;
+      else if(f.key==='排队券')foot+=`<td class="num">${sumQueue}</td>`;
+      else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
+      else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
+      else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
+      else if(f.key==='实付')foot+=`<td class="num">${fmt2(sumShifu)}</td>`;
+      else if(f.key==='手续费')foot+=`<td class="num">${fmt2(sumFee)}</td>`;
+      else if(f.key==='无手续费')foot+=`<td class="num">${fmtMoney(sumNoFee)}</td>`;
+      else if(f.key==='利润')foot+=`<td class="num">${fmtMoney(sumProfit)}</td>`;
+      else if(f.type==='num'||f.type==='points'||f.type==='money')foot+=`<td class="num"></td>`;
+      else if(f.key==='登录')foot+=`<td class="col-login"></td>`;
+      else foot+=`<td></td>`;
+    });
+    foot+='<td></td></tr></tfoot>';
+  }
 
   const cfgBar=isMaidan?renderMaidanConfig(ws):'';
   let html=cfgBar+'<table class="asset'+(isMaidan?' maidan maidan-legacy':'')+'">'+head+body+foot+'</table>';
@@ -572,8 +570,6 @@ function renderMaidanNewConfig(ws){
 }
 function renderMaidanSecondTable(ws){
   const fields=ws.fields2, rows=ws.rows2, tbl=1;
-  const sum={实付:0,手续费:0,成本:0,利润:0};
-  rows.forEach(r=>{const c=calcNewMaidan(r);if(!c.incomplete){sum.实付+=c.shifu;sum.手续费+=c.fee;sum.成本+=c.cost;sum.利润+=c.profit;}});
   const cfgBar=renderMaidanNewConfig(ws);
   const head='<thead><tr>'+fields.map(f=>`<th class="c-${f.align}" data-key="${f.key}">${escapeHtml(f.label)}</th>`).join('')+'<th class="c-center">操作</th></tr></thead>';
   let body='<tbody>';
@@ -584,18 +580,10 @@ function renderMaidanSecondTable(ws){
     body+='</tr>';
   });
   body+='</tbody>';
-  let foot='<tfoot><tr>';
-  fields.forEach(f=>{
-    if(f.key==='折扣')foot+='<td class="num"></td>';
-    else if(f.compute)foot+=`<td class="num">${fmt2(sum[f.key]||0)}</td>`;
-    else foot+='<td></td>';
-  });
-  foot+='<td></td></tr></tfoot>';
-  const head2=`<div class="maidan-block-head"><span class="maidan-block-title">新买单计算（券面值 / 券成本 / 优惠额 / 费率 整表共用，填一次即可）</span><button class="btn btn-sm btn-secondary" data-act="addnewrow">+ 新增一行</button></div>`;
-  return head2+cfgBar+'<table class="asset maidan-new">'+head+body+foot+'</table>';
+  return cfgBar+'<table class="asset maidan-new">'+head+body+'</table>';
 }
 
-// 仅重算买单表计算列 + 合计行（编辑顶部 config 时调用，避免重建输入框丢失焦点）
+// 仅重算买单表计算列（编辑顶部 config 时调用，避免重建输入框丢失焦点）
 function refreshMaidanComputed(){
   const ws=activeWs();
   const isMaidan=(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价');
@@ -607,15 +595,9 @@ function refreshMaidanComputed(){
     if(!tr)return;
     ws.fields.forEach((f,fi)=>{ if(f.compute&&tr.children[fi]) tr.children[fi].textContent=cellComputeText(f,r); });
   });
-  const foot=table.querySelector('tfoot tr');
-  if(foot){
-    const sums={实付:0,手续费:0,无手续费:0,利润:0};
-    ws.rows.forEach(r=>{const c=calcMaidan(r);sums.实付+=c.shifu;sums.手续费+=c.fee;sums.无手续费+=c.noFee;sums.利润+=c.profit;});
-    ws.fields.forEach((f,fi)=>{ if(sums[f.key]!=null&&foot.children[fi]) foot.children[fi].textContent=(f.key==='实付'||f.key==='手续费')?fmt2(sums[f.key]):fmtMoney(sums[f.key]); });
-  }
 }
 
-// 仅重算新计算区块（券参数整表共用）的计算列 + 合计行（编辑顶部 config2 时调用，避免重建输入框丢失焦点）
+// 仅重算新计算区块（券参数整表共用）的计算列（编辑顶部 config2 时调用，避免重建输入框丢失焦点）
 function refreshNewMaidanComputed(){
   const ws=activeWs();
   const isMaidan=(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价');
@@ -627,12 +609,6 @@ function refreshNewMaidanComputed(){
     if(!tr)return;
     ws.fields2.forEach((f,fi)=>{ if(f.compute&&tr.children[fi]) tr.children[fi].textContent=cellComputeText(f,r,1); });
   });
-  const foot=table.querySelector('tfoot tr');
-  if(foot){
-    const sums={实付:0,手续费:0,成本:0,利润:0};
-    ws.rows2.forEach(r=>{const c=calcNewMaidan(r);sums.实付+=c.shifu;sums.手续费+=c.fee;sums.成本+=c.cost;sums.利润+=c.profit;});
-    ws.fields2.forEach((f,fi)=>{ if(sums[f.key]!=null&&foot.children[fi]) foot.children[fi].textContent=fmt2(sums[f.key]); });
-  }
 }
 
 // ---- 整行选中（锁定高亮，不随排序/滚动改变） ----
@@ -801,8 +777,6 @@ document.getElementById('btnAdd').addEventListener('click',()=>openModal('add',-
 
 document.getElementById('tableMount').addEventListener('click',e=>{
   if(_justCellLong){_justCellLong=false;e.preventDefault();e.stopPropagation();return;}
-  const addNew=e.target.closest('[data-act="addnewrow"]');
-  if(addNew){const ws=activeWs();snapshot();ws.rows2.push(blankNewMaidanRow());save();renderTable();return;}
   const th=e.target.closest('th[data-key]');
   if(th && !e.target.closest('.resizer')){ if(th.dataset.key==='积分')toggleSort('积分'); return; }
   const delBtn=e.target.closest('[data-act="delrow"]');
