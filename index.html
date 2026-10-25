@@ -44,6 +44,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-tab.active{background:#fff;color:var(--color-ink);font-weight:600;border-color:var(--color-border);border-bottom:2px solid var(--color-primary);}
 .ws-tab .ws-edit{opacity:0;color:var(--color-gray-400);font-size:11px;cursor:pointer;}
 .ws-tab:hover .ws-edit,.ws-tab.active .ws-edit{opacity:1;}
+.ws-tab .ws-edit.ws-del-armed{opacity:1 !important;color:#e03131 !important;font-weight:700;}
 .ws-add{height:36px;padding:0 10px;background:transparent;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;white-space:nowrap;}
 .ws-add:hover{color:var(--color-primary-hover);}
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
@@ -168,7 +169,7 @@ table.asset tfoot td.num{text-align:center;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v43</div>
+<div class="ver-tag" id="verTag">v44</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -464,11 +465,29 @@ function startCellEdit(td,i,key){
 }
 
 // ---- Events ----
+let _armedDelId=null,_armedTimer=null;
 document.getElementById('tabs').addEventListener('click',e=>{
   const act=e.target.dataset.act;const id=e.target.dataset.id;
   if(act==='add'){snapshot();state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
-  if(act==='del'){if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}const w=state.worksheets.find(x=>x.id===id);if(!confirm('删除工作表「'+w.name+'」？该表数据将丢失'))return;snapshot();
-    state.worksheets=state.worksheets.filter(x=>x.id!==id);if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;save();renderTabs();renderTable();return;}
+  if(act==='del'){
+    e.preventDefault();
+    if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}
+    const w=state.worksheets.find(x=>x.id===id);if(!w)return;
+    if(_armedDelId!==id){ // 第一次点：仅进入待确认，不直接删除（防误触）
+      if(_armedTimer)clearTimeout(_armedTimer);
+      _armedDelId=id;
+      const span=e.target;span.textContent='确认?';span.classList.add('ws-del-armed');
+      _armedTimer=setTimeout(()=>{_armedDelId=null;renderTabs();},3000);
+      toast('再点一次叉号确认删除「'+w.name+'」');
+      return;
+    }
+    if(_armedTimer)clearTimeout(_armedTimer);_armedDelId=null; // 第二次点：确认删除
+    snapshot();
+    state.worksheets=state.worksheets.filter(x=>x.id!==id);
+    if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;
+    save();renderTabs();renderTable();return;
+  }
+  if(_armedDelId){_armedDelId=null;if(_armedTimer)clearTimeout(_armedTimer);} // 切换标签时取消待删除
   if(e.target.closest('.ws-rename-input'))return;
   if(_justLong){_justLong=false;e.preventDefault();e.stopPropagation();return;}
   const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
