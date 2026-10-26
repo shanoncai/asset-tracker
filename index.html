@@ -176,10 +176,11 @@ table.asset.maidan th:nth-child(5),table.asset.maidan td:nth-child(5){min-width:
 table.asset.maidan th:nth-child(6),table.asset.maidan td:nth-child(6){min-width:44px}
 table.asset.maidan th:nth-child(7),table.asset.maidan td:nth-child(7){min-width:46px}
 table.asset.maidan th:nth-child(8),table.asset.maidan td:nth-child(8){min-width:28px;width:28px}
+.maidan-title{font-size:13px;font-weight:700;color:var(--color-ink);padding:10px 8px 2px;}
 .maidan-config{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 8px;background:var(--color-surface);border:1px solid var(--color-border);border-bottom:none;border-radius:8px 8px 0 0;}
 .maidan-config .cfg-item{display:flex;align-items:center;gap:3px;font-size:12px;white-space:nowrap;}
 .maidan-config .cfg-item span{color:var(--color-ink);}
-.maidan-config .cfg-input{width:60px;font-size:13px;padding:3px 4px;text-align:right;border:1px solid var(--color-border-strong);border-radius:6px;background:#fff;color:var(--color-ink);}
+.maidan-config .cfg-input{width:46px;font-size:13px;padding:3px 4px;text-align:right;border:1px solid var(--color-border-strong);border-radius:6px;background:#fff;color:var(--color-ink);}
 .maidan-config .cfg-input:focus{outline:2px solid var(--color-primary);}
 .maidan-config .cfg-unit{margin-left:3px;font-size:12px;color:var(--color-gray-500);}
 .maidan-new-cfg{flex-wrap:nowrap;gap:4px;overflow-x:auto;}
@@ -299,6 +300,8 @@ const NEW_MAIDAN_FIELDS=[
   {key:'利润',label:'利润',type:'money',align:'right',compute:true},
 ];
 const NEW_MAIDAN_COLS=[60,56,56,56,56,56];
+// 三个买单表的标题（顺序：原价表 / 新计算块1 / 新计算块2）
+const MAIDAN_TABLE_NAMES=['500元买单','300元买单','400元买单'];
 function blankNewMaidanRow(){return {原价:''};}
 
 let state=load()||defaultState();
@@ -319,10 +322,10 @@ function af(){return activeWs().fields||FIELDS;} // 当前表字段（买单表�
 function fmtAmt(n){return (Math.round((Number(n)||0)*100)/100).toFixed(2);}
 function calcMaidan(r){
   const ws=activeWs();const cfg=(ws&&ws.config)||{};
-  const zkRaw=cfg['折扣'], couponRaw=cfg['打折券'], rateRaw=cfg['手续费率'];
+  const zkRaw=cfg['折扣'], couponRaw=cfg['券成本'], rateRaw=cfg['手续费率'], memberRaw=cfg['会员卡'];
   const yuanRaw=r['原价'], jiuRaw=r['酒水'];
   const yuan=Number(yuanRaw)||0,jiu=Number(jiuRaw)||0,zk=Number(zkRaw)||0;
-  const coupon=Number(couponRaw)||0,rate=Number(rateRaw)||0;
+  const coupon=Number(couponRaw)||0,rate=Number(rateRaw)||0,member=Number(memberRaw)||1;
   // 关键参数未填（全新材料空行）时计算列留空，由用户手动录入
   if(yuanRaw===''||yuanRaw==null||zkRaw===''||zkRaw==null||yuan<=0||zk<=0){
     return {incomplete:true,zhehou:0,fee:0,noFee:0,shifu:0,finalDisc:0,cost:0,profit:0};
@@ -334,22 +337,25 @@ function calcMaidan(r){
   const fee=Math.round(feeRaw*100)/100;  // 手续费：保留两位小数（不向上取整）
   const shifu=noFee+fee;                // 实付 = 无手续费 + 手续费（整）
   const finalDisc=yuan?shifu/yuan:0;    // 最终折扣 = 实付/原价
-  const cost=base*0.9;                  // 成本 = 折扣后餐费(我最后支付的金额)×0.9
-  const profit=Math.round(noFee-cost-coupon); // 利润：四舍五入取整（= 无手续费 − 成本 − 打折券成本）
+  let cost=base*0.9;                    // 成本 = 折扣后餐费(我最后支付的金额)×0.9（成本率）
+  if(memberRaw!==''&&memberRaw!=null) cost=cost*member; // 会员卡：成本再打几折（如 0.9 表示9折）
+  const profit=Math.round(noFee-cost-coupon); // 利润：四舍五入取整（= 无手续费 − 成本 − 券成本）
   return {incomplete:false,zhehou,fee,noFee,shifu,finalDisc,cost,profit};
 }
-// 新计算区块（券参数整表共用，可有多份）：实付=原价-优惠额；手续费=实付×手续费率(%)；折扣=实付/原价；成本=(原价-券面值)×0.91+券成本；利润=实付-手续费
+// 新计算区块（券参数整表共用，可有多份）：实付=原价-优惠额；手续费=实付×费率(%)；折扣=实付/原价；成本=(原价-券面值)×系数+券成本，再按会员卡打几折；利润=实付-手续费-成本
 function calcNewMaidan(r, bi){
   const ws=activeWs();const blk=(ws&&ws.newBlocks&&ws.newBlocks[bi])||{};const cfg=blk.config||{};
   const yuan=Number(r['原价'])||0;
-  const youhui=Number(cfg['优惠额'])||0, face=Number(cfg['券面值'])||0, couponCost=Number(cfg['券成本'])||0, rate=Number(cfg['手续费率'])||0;
+  const youhui=Number(cfg['优惠额'])||0, face=Number(cfg['券面值'])||0, couponCost=Number(cfg['券成本'])||0, rate=Number(cfg['手续费率'])||0, coefRaw=cfg['系数'], memberRaw=cfg['会员卡'];
+  const coef=Number(coefRaw)||0.91, member=Number(memberRaw)||1;
   if(r['原价']===''||r['原价']==null||yuan<=0){
     return {incomplete:true,shifu:0,fee:0,disc:0,cost:0,profit:0};
   }
   const shifu=yuan-youhui;
   const fee=Math.round(shifu*rate/100*100)/100;
   const disc=yuan?shifu/yuan:0;
-  const cost=(yuan-face)*0.91+couponCost;
+  let cost=(yuan-face)*coef+couponCost;
+  if(memberRaw!==''&&memberRaw!=null) cost=cost*member; // 会员卡：成本再打几折
   const profit=shifu-fee-cost;   // 利润：实付 − 手续费 − 成本
   return {incomplete:false,shifu,fee,disc,cost,profit};
 }
@@ -387,7 +393,7 @@ function defaultState(){
     {微信:'小美',登录:'',排队券:3,'85券':2,券码:'MC-77',积分:1500,买单:'0',余额:66,生日:'09-09',生日券:0,保级日:'2026-11-20',成长值:2400,等级:'V2',主副卡:'副卡'},
     {微信:'大壮',登录:'',排队券:0,'85券':1,券码:'',积分:3100,买单:'4',余额:0,生日:'01-05',生日券:0,保级日:'2026-10-28',成长值:5200,等级:'V5',主副卡:'主卡'},
   ]};
-  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',打折券:25,手续费率:0.6},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()],fields2:NEW_MAIDAN_FIELDS.slice(),newBlocks:[{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:[blankNewMaidanRow()]},{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:[blankNewMaidanRow()]}]};
+  const ws3={id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',券成本:25,手续费率:0.6,会员卡:''},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()],fields2:NEW_MAIDAN_FIELDS.slice(),newBlocks:[{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:[blankNewMaidanRow()]},{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:[blankNewMaidanRow()]}]};
   return {worksheets:[ws1,ws2,ws3],activeWsId:ws1.id,lastClearMonth:monthKey(new Date())};
 }
 
@@ -400,16 +406,19 @@ function load(){
       if(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价'){
         // 已是新结构（已含 newBlocks 且无旧 rows2）→ 仅兜底字段，绝不重建 newBlocks，保留用户已填数据
         if(ws.newBlocks && !ws.rows2){
-          if(!ws.config)ws.config={折扣:'0.85',打折券:25,手续费率:0.6};
+          if(!ws.config)ws.config={折扣:'0.85',券成本:25,手续费率:0.6,会员卡:''};
+          if(ws.config['打折券']!=null){ if(ws.config['券成本']==null)ws.config['券成本']=ws.config['打折券']; delete ws.config['打折券']; }
+          if(ws.config['会员卡']==null)ws.config['会员卡']='';
           ws.fields=MAIDAN_FIELDS.slice();
           ws.colWidths=MAIDAN_COLS.slice();
           ws.fields2=NEW_MAIDAN_FIELDS.slice();
+          (ws.newBlocks||[]).forEach(b=>{ if(b&&b.config){ if(b.config['系数']==null)b.config['系数']='0.91'; if(b.config['会员卡']==null)b.config['会员卡']=''; } });
           return;
         }
         // 旧结构迁移：从 rows2 抽取「原价」重建 newBlocks（一次性，迁移后不再进入本分支）
         const rd=ws.rowDefaults||{}; const fr=(ws.rows&&ws.rows[0])||{};
         const pick=(k,d)=> (rd[k]!=null?rd[k]:(fr[k]!=null?fr[k]:d));
-        ws.config={折扣:pick('折扣','0.85'),打折券:pick('打折券',25),手续费率:pick('手续费率',0.6)};
+        ws.config={折扣:pick('折扣','0.85'),券成本:pick('打折券',25),手续费率:pick('手续费率',0.6),会员卡:''};
         const KEEP=['原价','酒水']; const DROP=['折扣','打折券','85券','手续费率','实付','无手续费','最终折扣','利润','手续费'];
         (ws.rows||[]).forEach(r=>{ if(!r)return; const nr={}; KEEP.forEach(k=>nr[k]=(r[k]!=null?r[k]:'')); DROP.forEach(k=>delete r[k]); Object.assign(r,nr); });
         ws.fields=MAIDAN_FIELDS.slice();
@@ -418,28 +427,31 @@ function load(){
         ws.fields2=NEW_MAIDAN_FIELDS.slice();
         const _nb=(ws.rows2||[]).filter(r=>r&&(r['原价']!=null&&r['原价']!=='')).map(r=>({原价:r['原价']}));
         if(!_nb.length)_nb.push(blankNewMaidanRow());
-        const _cfg=(ws.config2&&typeof ws.config2==='object')?ws.config2:{券面值:'',券成本:'',优惠额:'',手续费率:''};
-        ws.newBlocks=[{config:{券面值:_cfg['券面值']||'',券成本:_cfg['券成本']||'',优惠额:_cfg['优惠额']||'',手续费率:_cfg['手续费率']||''},rows:_nb},{config:{券面值:_cfg['券面值']||'',券成本:_cfg['券成本']||'',优惠额:_cfg['优惠额']||'',手续费率:_cfg['手续费率']||''},rows:_nb.map(r=>({...r}))}];
+        const _cfg=(ws.config2&&typeof ws.config2==='object')?ws.config2:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''};
+        const _mkCfg=()=>({券面值:_cfg['券面值']||'',券成本:_cfg['券成本']||'',优惠额:_cfg['优惠额']||'',手续费率:_cfg['手续费率']||'',系数:_cfg['系数']||'0.91',会员卡:_cfg['会员卡']||''});
+        ws.newBlocks=[{config:_mkCfg(),rows:_nb},{config:_mkCfg(),rows:_nb.map(r=>({...r}))}];
         delete ws.config2; delete ws.rows2;
       }
     });
     // 确保「买单」表存在且至少有一行可填（全新空表也保证可录入，不改动已有数据）
     const maidan=o.worksheets.filter(ws=>ws.name==='买单');
     if(maidan.length===0){
-      o.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',打折券:25,手续费率:0.6},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()],fields2:NEW_MAIDAN_FIELDS.slice(),newBlocks:[{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:[blankNewMaidanRow()]},{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:[blankNewMaidanRow()]}]});
+      o.worksheets.push({id:uid(),name:'买单',fields:MAIDAN_FIELDS.slice(),colWidths:MAIDAN_COLS.slice(),config:{折扣:'0.85',券成本:25,手续费率:0.6,会员卡:''},rowDefaults:{},sort:{key:null,dir:null},rows:[blankMaidanRow()],fields2:NEW_MAIDAN_FIELDS.slice(),newBlocks:[{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:[blankNewMaidanRow()]},{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:[blankNewMaidanRow()]}]});
     }else{
       if(maidan.length>1){ // 清理重复的买单表，保留数据最多的那张
         maidan.sort((a,b)=>b.rows.length-a.rows.length);
         maidan.slice(1).forEach(ws=>{const i=o.worksheets.indexOf(ws);if(i>=0)o.worksheets.splice(i,1);});
       }
-      if(!maidan[0].config)maidan[0].config={折扣:'0.85',打折券:25,手续费率:0.6};
+      if(!maidan[0].config)maidan[0].config={折扣:'0.85',券成本:25,手续费率:0.6,会员卡:''};
+      if(maidan[0].config['打折券']!=null){ if(maidan[0].config['券成本']==null)maidan[0].config['券成本']=maidan[0].config['打折券']; delete maidan[0].config['打折券']; }
+      if(maidan[0].config['会员卡']==null)maidan[0].config['会员卡']='';
       maidan[0].fields2=NEW_MAIDAN_FIELDS.slice();
       if(!maidan[0].newBlocks||!maidan[0].newBlocks.length){
         const _nb=(maidan[0].rows2||[]).filter(r=>r&&(r['原价']!=null&&r['原价']!=='')).map(r=>({原价:r['原价']}));
         if(!_nb.length)_nb.push(blankNewMaidanRow());
-        maidan[0].newBlocks=[{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:_nb},{config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:_nb.map(r=>({...r}))}];
+        maidan[0].newBlocks=[{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:_nb},{config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:_nb.map(r=>({...r}))}];
       }else{
-        while(maidan[0].newBlocks.length<2)maidan[0].newBlocks.push({config:{券面值:'',券成本:'',优惠额:'',手续费率:''},rows:[blankNewMaidanRow()]});
+        while(maidan[0].newBlocks.length<2)maidan[0].newBlocks.push({config:{券面值:'',券成本:'',优惠额:'',手续费率:'',系数:'0.91',会员卡:''},rows:[blankNewMaidanRow()]});
       }
       delete maidan[0].config2; delete maidan[0].rows2;
       if(maidan[0].rows.length===0)maidan[0].rows.push(blankMaidanRow());
@@ -509,7 +521,7 @@ function renderTabs(){
 function renderMaidanConfig(ws){
   const cfg=ws.config||{};
   const item=(k,label,ph,unit)=>`<label class="cfg-item"><span>${label}</span><input class="cfg-input" data-key="${k}" type="number" step="0.01" inputmode="decimal" value="${escapeHtml(cfg[k]==null?'':cfg[k])}" placeholder="${ph||''}">${unit?`<span class="cfg-unit">${unit}</span>`:''}</label>`;
-  return `<div class="maidan-config">${item('折扣','折扣','0.85=85折')}${item('打折券','打折券','')}${item('手续费率','手续费率','0.6=0.6%','%')}</div>`;
+  return `<div class="maidan-config">${item('折扣','折扣','0.85=85折')}${item('券成本','券成本','')}${item('手续费率','费率','0.6=0.6%','%')}${item('会员卡','会员卡','0.9=9折')}</div>`;
 }
 function renderTable(){
   const ws=activeWs();
@@ -572,7 +584,8 @@ function renderTable(){
   }
 
   const cfgBar=isMaidan?renderMaidanConfig(ws):'';
-  let html=cfgBar+'<table class="asset'+(isMaidan?' maidan maidan-legacy':'')+'">'+head+body+foot+'</table>';
+  const maidanTitle=isMaidan?`<div class="maidan-title">${MAIDAN_TABLE_NAMES[0]}</div>`:'';
+  let html=maidanTitle+cfgBar+'<table class="asset'+(isMaidan?' maidan maidan-legacy':'')+'">'+head+body+foot+'</table>';
   if(isMaidan&&ws.fields2&&ws.newBlocks)ws.newBlocks.forEach((blk,bi)=>{html+=renderMaidanNewBlock(ws,bi);});
   document.getElementById('tableMount').innerHTML=html;
   const subEl=document.getElementById('subInfo');
@@ -584,13 +597,13 @@ function renderTable(){
 function renderMaidanNewConfig(ws, bi){
   const cfg=(ws.newBlocks[bi]&&ws.newBlocks[bi].config)||{};
   const item=(k,label,ph,unit)=>`<label class="cfg-item"><span>${label}</span><input class="cfg-input" data-block="${bi}" data-key="${k}" type="number" step="0.01" inputmode="decimal" value="${escapeHtml(cfg[k]==null?'':cfg[k])}" placeholder="${ph||''}">${unit?`<span class="cfg-unit">${unit}</span>`:''}</label>`;
-  return `<div class="maidan-config maidan-new-cfg">${item('券面值','券面值','')}${item('券成本','券成本','')}${item('优惠额','优惠额','')}${item('手续费率','费率','0.6=0.6%','%')}</div>`;
+  return `<div class="maidan-config maidan-new-cfg">${item('券面值','券面值','')}${item('券成本','券成本','')}${item('优惠额','优惠额','')}${item('手续费率','费率','0.6=0.6%','%')}${item('系数','系数','0.91')}${item('会员卡','会员卡','0.9=9折')}</div>`;
 }
 function renderMaidanNewBlock(ws, bi){
   const blk=ws.newBlocks[bi]; if(!blk)return '';
   const fields=ws.fields2, rows=blk.rows, tbl=bi+1;
   const cfgBar=renderMaidanNewConfig(ws, bi);
-  const label=`<div class="maidan-new-label">计算表 ${bi+1}</div>`;
+  const label=`<div class="maidan-new-label">${MAIDAN_TABLE_NAMES[bi+1]||('计算表 '+(bi+1))}</div>`;
   const head='<thead><tr>'+fields.map(f=>`<th class="c-${f.align}" data-key="${f.key}">${escapeHtml(f.label)}</th>`).join('')+'<th class="c-center">操作</th></tr></thead>';
   let body='<tbody>';
   rows.forEach((r,oi)=>{
@@ -914,17 +927,18 @@ function openFormula(i,tbl){
   if(tbl>=1){
     const blk=ws.newBlocks[tbl-1];const r=blk.rows[i];const c=calcNewMaidan(r, tbl-1);
     const cfg=blk.config||{};
-    const yuan=Number(r['原价'])||0,youhui=Number(cfg['优惠额'])||0,face=Number(cfg['券面值'])||0,couponCost=Number(cfg['券成本'])||0,rate=Number(cfg['手续费率'])||0;
-    document.getElementById('formulaTitle').textContent='新买单计算 · 表'+tbl+' · 第 '+(i+1)+' 行';
+    const yuan=Number(r['原价'])||0,youhui=Number(cfg['优惠额'])||0,face=Number(cfg['券面值'])||0,couponCost=Number(cfg['券成本'])||0,rate=Number(cfg['手续费率'])||0,coefRaw=cfg['系数'],memberRaw=cfg['会员卡'];
+    const coef=Number(coefRaw)||0.91, member=Number(memberRaw)||1;
+    document.getElementById('formulaTitle').textContent='新买单计算 · '+(MAIDAN_TABLE_NAMES[tbl]||('表'+tbl))+' · 第 '+(i+1)+' 行';
     let html;
     if(c.incomplete){
-      html='<p style="margin:0;color:var(--color-gray-500)">本行「原价」未填写，计算列暂无数据。请先补全「原价」，并在上方券参数栏填好「优惠额 / 券面值 / 券成本 / 费率」。</p>';
+      html='<p style="margin:0;color:var(--color-gray-500)">本行「原价」未填写，计算列暂无数据。请先补全「原价」，并在上方券参数栏填好「优惠额 / 券面值 / 券成本 / 费率 / 系数 / 会员卡」。</p>';
     }else{
       const rows=[
         ['实付','原价 − 优惠额', `${yuan} − ${youhui} = ${fmt2(c.shifu)}`],
         ['手续费','实付 × 费率%（保留两位小数）', `${fmt2(c.shifu)} × ${rate}% = ${fmt2(c.shifu*rate/100)} = ${fmt2(c.fee)}`],
         ['折扣','实付 ÷ 原价', `${fmt2(c.shifu)} ÷ ${yuan} = ${(c.disc*100).toFixed(1)}%`],
-        ['成本','(原价 − 券面值) × 0.91 + 券成本', `(${yuan} − ${face}) × 0.91 + ${couponCost} = ${fmt2(c.cost)}`],
+        ['成本','(原价 − 券面值) × 系数 + 券成本'+(memberRaw!==''&&memberRaw!=null?' × 会员卡':''), `(${yuan} − ${face}) × ${coef} + ${couponCost}`+(memberRaw!==''&&memberRaw!=null?` × ${member}`:'')+` = ${fmt2(c.cost)}`],
         ['利润','实付 − 手续费 − 成本', `${fmt2(c.shifu)} − ${fmt2(c.fee)} − ${fmt2(c.cost)} = ${fmt2(c.profit)}`],
       ];
       html=rows.map(([k,formula,calc])=>`<div class="fld"><span>${k}</span><div style="font-size:12px;color:var(--color-ink);font-family:'SFMono-Regular',Consolas,monospace;word-break:break-all;background:var(--color-gray-50);padding:6px 8px;border-radius:6px;border:1px solid var(--color-border)">${escapeHtml(calc)}</div><div style="font-size:11px;color:var(--color-gray-400)">${escapeHtml(formula)}</div></div>`).join('');
@@ -936,8 +950,9 @@ function openFormula(i,tbl){
   const r=ws.rows[i];const c=calcMaidan(r);
   const cfg=ws.config||{};
   const yuan=Number(r['原价'])||0, jiu=Number(r['酒水'])||0;
-  const zk=Number(cfg['折扣'])||0, coupon=Number(cfg['打折券'])||0, rate=Number(cfg['手续费率'])||0;
-  document.getElementById('formulaTitle').textContent='计算公式 · 第 '+(i+1)+' 行';
+  const zk=Number(cfg['折扣'])||0, coupon=Number(cfg['券成本'])||0, rate=Number(cfg['手续费率'])||0, memberRaw=cfg['会员卡'];
+  const member=Number(memberRaw)||1;
+  document.getElementById('formulaTitle').textContent='计算公式 · '+(MAIDAN_TABLE_NAMES[0]||'')+' · 第 '+(i+1)+' 行';
   let html;
   if(c.incomplete){
     html='<p style="margin:0;color:var(--color-gray-500)">本行「原价」或顶部「折扣」未填写，计算列暂无数据。请先补全「原价」并在顶部填好「折扣」。</p>';
@@ -945,12 +960,12 @@ function openFormula(i,tbl){
     const base=c.zhehou+jiu;
     const rows=[
       ['折扣后餐费', '(原价 − 酒水) × 折扣 + 酒水', `(${yuan} − ${jiu}) × ${zk} + ${jiu} = ${fmt2(c.zhehou)} + ${jiu} = ${fmt2(base)}`],
-      ['无手续费', '⌈折扣后餐费 + 打折券⌉（向上取整）', `⌈${fmt2(base)} + ${coupon}⌉ = ${fmtMoney(c.noFee)}`],
-      ['手续费', '折扣后餐费 × 手续费率%（保留两位小数）', `${fmt2(base)} × ${rate}% = ${fmt2(base*rate/100)} = ${fmt2(c.fee)}`],
+      ['无手续费', '⌈折扣后餐费 + 券成本⌉（向上取整）', `⌈${fmt2(base)} + ${coupon}⌉ = ${fmtMoney(c.noFee)}`],
+      ['手续费', '折扣后餐费 × 费率%（保留两位小数）', `${fmt2(base)} × ${rate}% = ${fmt2(base*rate/100)} = ${fmt2(c.fee)}`],
       ['实付', '无手续费 + 手续费', `${fmtMoney(c.noFee)} + ${fmt2(c.fee)} = ${fmt2(c.shifu)}`],
       ['最终折扣', '实付 ÷ 原价', `${fmt2(c.shifu)} ÷ ${yuan} = ${(c.finalDisc*100).toFixed(1)}%`],
-      ['成本', '折扣后餐费 × 0.9', `${fmt2(base)} × 0.9 = ${fmt2(c.cost)}`],
-      ['利润', '无手续费 − 成本 − 打折券（四舍五入）', `${fmtMoney(c.noFee)} − ${fmt2(c.cost)} − ${coupon} = ${fmtMoney(c.profit)}`],
+      ['成本', '折扣后餐费 × 0.9'+(memberRaw!==''&&memberRaw!=null?' × 会员卡':''), `${fmt2(base)} × 0.9`+(memberRaw!==''&&memberRaw!=null?` × ${member}`:'')+` = ${fmt2(c.cost)}`],
+      ['利润', '无手续费 − 成本 − 券成本（四舍五入）', `${fmtMoney(c.noFee)} − ${fmt2(c.cost)} − ${coupon} = ${fmtMoney(c.profit)}`],
     ];
     html=rows.map(([k,formula,calc])=>`<div class="fld"><span>${k}</span><div style="font-size:12px;color:var(--color-ink);font-family:'SFMono-Regular',Consolas,monospace;word-break:break-all;background:var(--color-gray-50);padding:6px 8px;border-radius:6px;border:1px solid var(--color-border)">${escapeHtml(calc)}</div><div style="font-size:11px;color:var(--color-gray-400)">${escapeHtml(formula)}</div></div>`).join('');
   }
