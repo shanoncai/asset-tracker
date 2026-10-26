@@ -398,6 +398,15 @@ function load(){
     // 迁移：买单表结构升级（折扣/打折券/手续费率 移到整表级 config，逐列改为 手续费）
     o.worksheets.forEach(ws=>{
       if(ws.fields&&ws.fields[0]&&ws.fields[0].key==='原价'){
+        // 已是新结构（已含 newBlocks 且无旧 rows2）→ 仅兜底字段，绝不重建 newBlocks，保留用户已填数据
+        if(ws.newBlocks && !ws.rows2){
+          if(!ws.config)ws.config={折扣:'0.85',打折券:25,手续费率:0.6};
+          ws.fields=MAIDAN_FIELDS.slice();
+          ws.colWidths=MAIDAN_COLS.slice();
+          ws.fields2=NEW_MAIDAN_FIELDS.slice();
+          return;
+        }
+        // 旧结构迁移：从 rows2 抽取「原价」重建 newBlocks（一次性，迁移后不再进入本分支）
         const rd=ws.rowDefaults||{}; const fr=(ws.rows&&ws.rows[0])||{};
         const pick=(k,d)=> (rd[k]!=null?rd[k]:(fr[k]!=null?fr[k]:d));
         ws.config={折扣:pick('折扣','0.85'),打折券:pick('打折券',25),手续费率:pick('手续费率',0.6)};
