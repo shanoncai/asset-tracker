@@ -625,8 +625,9 @@ function refreshNewMaidanComputed(bi){
 // ---- 整行选中（锁定高亮，不随排序/滚动改变） ----
 let selOi=null;
 function applySelection(){
+  const cur=activeWs(); const wsId=cur?cur.id:'';
   document.querySelectorAll('#tableMount tbody tr').forEach(tr=>{
-    tr.classList.toggle('selected', (tr.dataset.tbl||'0')+':'+tr.dataset.i===selOi);
+    tr.classList.toggle('selected', wsId+'|'+(tr.dataset.tbl||'0')+':'+tr.dataset.i===selOi);
   });
 }
 
@@ -803,7 +804,7 @@ document.getElementById('tableMount').addEventListener('click',e=>{
   }
   // 选中整行：点同行取消，点其他行保持原选中（横滑不误触）
   const tr=e.target.closest('tbody tr');
-  if(tr && !touchMoved){ const key=(tr.dataset.tbl||'0')+':'+tr.dataset.i; if(key===selOi){selOi=null;applySelection();} else {selOi=key;applySelection();} }
+  if(tr && !touchMoved){ const key=activeWs().id+'|'+(tr.dataset.tbl||'0')+':'+tr.dataset.i; if(key===selOi){selOi=null;applySelection();} else {selOi=key;applySelection();} }
   touchMoved=false;
 });
 // 买单表顶部 config（折扣/打折券/手续费率）编辑：input 实时更新，只重算计算列+合计，不重建输入框（保留焦点）
