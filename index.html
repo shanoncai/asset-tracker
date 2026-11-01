@@ -102,7 +102,10 @@ td.num.zero-q{background:#cdd2d9;color:#5b626b;}
 table.asset tbody td.hl-shifu{background:#ffd43b !important;color:#5b4700;font-weight:700;border-radius:4px;}
 td.points-high{background:var(--color-points-high-bg)!important;color:var(--color-points-high-text)!important;font-weight:600;border-radius:4px;}
 td.warn{color:var(--color-warning);font-weight:600;}
-.cell-text{display:inline-block;white-space:nowrap;vertical-align:middle;}
+.cell-text{display:inline-block;white-space:nowrap;vertical-align:middle;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+/* 阻止 iOS 长按弹出系统菜单/选中（会抢走手势，导致长按无法进入编辑）；编辑输入框恢复可选中 */
+table.asset td{-webkit-touch-callout:none;}
+table.asset td input.cell-editor,table.asset td select.cell-editor{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default;}
 .login{display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:4px 6px;margin:-4px -6px;border-radius:6px;}
 .login .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
 .login.on .dot{background:var(--color-success);}
@@ -207,11 +210,11 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="巴奴会员">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY5Y+36Jma5ouf6LWE5Lqn77yI56ev5YiGIC8g5Yi456CKIC8g5L2Z6aKd77yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLj92PTcyIiwic2NvcGUiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmFmYmZjIiwidGhlbWVfY29sb3IiOiIjNjM1YmZmIiwiaWNvbnMiOlt7InNyYyI6Imljb24ucG5nIiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIuW3tOWltOS8muWRmCIsICJzaG9ydF9uYW1lIjogIuW3tOWltOS8muWRmCIsICJkZXNjcmlwdGlvbiI6ICLlpJrkvJrlkZjotYTkuqfov73ouKrvvIjnp6/liIYgLyDkubDljZUgLyDmjpLpmJ/liLjvvInlrp7ml7bov73ouKrpnaLmnb8iLCAic3RhcnRfdXJsIjogIi4/dj03MyIsICJzY29wZSI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJvcmllbnRhdGlvbiI6ICJhbnkiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmFmYmZjIiwgInRoZW1lX2NvbG9yIjogIiM2MzViZmYiLCAiaWNvbnMiOiBbeyJzcmMiOiAiaWNvbi5wbmciLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v72</div>
+<div class="ver-tag" id="verTag">v73</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -839,37 +842,41 @@ document.getElementById('tableMount').addEventListener('input',e=>{
 // 区分「点」与「横滑」：横滑查看时不触发选中
 let touchMoved=false, _tsX=0, _tsY=0;
 let _justCellLong=false;     // 长按单元格进入编辑的防抖标记（避免随后合成的 click 误触发选中/公式）
-let _cellLongTimer=null,_cellLongArmed=false,_ptrId=null;
+let _cellLongTimer=null,_cellLongArmed=false,_ptrId=null,_tsDown=0;
 const _tm=document.getElementById('tableMount');
-// 长按触发：松手或被系统接管（pointercancel）时，只要已蓄满 500ms 就进入编辑
+// 长按触发：松手或被系统接管（pointercancel）时，只要按住≥阈值且未滑动就进入编辑
 function _cellLongTrigger(e){
   if(_cellLongTimer){clearTimeout(_cellLongTimer);_cellLongTimer=null;}
-  if(_cellLongArmed){
-    _cellLongArmed=false;_justCellLong=true;
-    const cell=e.target.closest('td[data-key]');
-    if(cell){const i=+cell.dataset.i,key=cell.dataset.key,tbl=+cell.dataset.tbl||0;const ws=activeWs();const f=((tbl===0)?(ws.fields||FIELDS):ws.fields2).find(x=>x.key===key);
-      if(f&&f.compute){const arr=(tbl===0)?ws.rows:ws.newBlocks[tbl-1].rows;if(i>=0&&i<arr.length)openFormula(i,tbl);}
-      else startCellEdit(cell,i,key,tbl);
-    }
-    setTimeout(()=>{_justCellLong=false;},400);
+  if(e.pointerType==='mouse')return;
+  const longEnough=performance.now()-_tsDown>=LONG_PRESS;
+  if(!_cellLongArmed && !longEnough)return;   // 短按（<阈值）交给 click 选中整行
+  if(touchMoved)return;                        // 横滑=滚动，不编辑
+  _cellLongArmed=false;_justCellLong=true;
+  const cell=e.target.closest('td[data-key]');
+  if(cell){const i=+cell.dataset.i,key=cell.dataset.key,tbl=+cell.dataset.tbl||0;const ws=activeWs();const f=((tbl===0)?(ws.fields||FIELDS):ws.fields2).find(x=>x.key===key);
+    if(f&&f.compute){const arr=(tbl===0)?ws.rows:ws.newBlocks[tbl-1].rows;if(i>=0&&i<arr.length)openFormula(i,tbl);}
+    else startCellEdit(cell,i,key,tbl);
   }
+  setTimeout(()=>{_justCellLong=false;},400);
 }
-// 统一用 Pointer Events（鼠标/触控/触控笔通吃，跨设备最稳）；长按 500ms 进入编辑
+// 统一用 Pointer Events；触屏长按（≥400ms 且手指未滑动）进入编辑；桌面仍用单击选中+双击编辑
+const LONG_PRESS=400;
 _tm.addEventListener('pointerdown',e=>{
-  if(e.pointerType==='mouse'&&e.button!==0)return;
-  _tsX=e.clientX;_tsY=e.clientY;touchMoved=false;_cellLongArmed=false;_ptrId=e.pointerId;
+  if(e.pointerType==='mouse')return;            // 桌面交给 dblclick / click
+  _tsX=e.clientX;_tsY=e.clientY;_tsDown=performance.now();touchMoved=false;_cellLongArmed=false;_ptrId=e.pointerId;
   const cell=e.target.closest('td[data-key]');
   if(cell && !e.target.closest('.resizer') && !e.target.closest('.cfg-input') && !e.target.closest('.row-edit')){
-    _cellLongTimer=setTimeout(()=>{_cellLongArmed=true;if(navigator.vibrate)navigator.vibrate(10);},500);
+    _cellLongTimer=setTimeout(()=>{_cellLongArmed=true;if(navigator.vibrate)navigator.vibrate(10);},LONG_PRESS);
   }
 },{passive:true});
-// 仅“尚未蓄满”时因滑动取消；蓄满后不再因手指轻微抖动而取消（真机长按后常有几像素抖动）
 _tm.addEventListener('pointermove',e=>{
   if(_ptrId!==null&&e.pointerId!==_ptrId)return;
-  if(!_cellLongArmed&&(Math.abs(e.clientX-_tsX)>12||Math.abs(e.clientY-_tsY)>12)){touchMoved=true;if(_cellLongTimer){clearTimeout(_cellLongTimer);_cellLongTimer=null;}}
+  if(Math.abs(e.clientX-_tsX)>12||Math.abs(e.clientY-_tsY)>12){touchMoved=true;if(_cellLongTimer){clearTimeout(_cellLongTimer);_cellLongTimer=null;}}
 },{passive:true});
 _tm.addEventListener('pointerup',_cellLongTrigger,{passive:true});
 _tm.addEventListener('pointercancel',_cellLongTrigger,{passive:true});
+// 阻止 iOS 长按弹出系统菜单/选中（会抢走手势、导致长按无法进入编辑）
+_tm.addEventListener('contextmenu',e=>{if(e.pointerType!=='mouse')e.preventDefault();},{passive:false});
 // 双击单元格进入就地编辑（单击只用于排序/删除）
 document.getElementById('tableMount').addEventListener('dblclick',e=>{
   const cell=e.target.closest('td[data-key]');
