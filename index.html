@@ -211,7 +211,7 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v61</div>
+<div class="ver-tag" id="verTag">v71</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -660,11 +660,11 @@ function cellHtml(f,r,oi,tbl){
   }
   if(f.type==='discount'){
     const n=Number(v)||0;const empty=(v===''||v==null);
-    return `<td class="num" ${attr}>${empty?'':(n*100).toFixed(0)+'折'}</td>`;
+    return `<td class="num" ${attr}><span class="cell-text">${empty?'':(n*100).toFixed(0)+'折'}</span></td>`;
   }
   if(f.type==='pct'){
     const n=Number(v)||0;const empty=(v===''||v==null);
-    return `<td class="num" ${attr}>${empty?'':n+'%'}</td>`;
+    return `<td class="num" ${attr}><span class="cell-text">${empty?'':n+'%'}</span></td>`;
   }
   if(f.key==='微信'){
     const bv=r['生日券'];
@@ -688,16 +688,16 @@ function cellHtml(f,r,oi,tbl){
     const n=Number(v)||0;const empty=(v===''||v==null);
     const zc=(f.key==='排队券'&&n===0)?' zero-q':'';
     const cls=empty?'num':('num'+zc);
-    return `<td class="${cls}" ${attr}>${empty?'':n}</td>`;
+    return `<td class="${cls}" ${attr}><span class="cell-text">${empty?'':n}</span></td>`;
   }
   if(f.type==='points'){
     const n=Number(v)||0;const empty=(v===''||v==null);
     let cls=empty?'num':(n>=3000?'num points-high':'num');
-    return `<td class="${cls}" ${attr}>${empty?'':n}</td>`;
+    return `<td class="${cls}" ${attr}><span class="cell-text">${empty?'':n}</span></td>`;
   }
   if(f.type==='money'){
     const n=Number(v)||0;const empty=(v===''||v==null);
-    return `<td class="num" ${attr}>${empty?'':fmtMoney(v)}</td>`;
+    return `<td class="num" ${attr}><span class="cell-text">${empty?'':fmtMoney(v)}</span></td>`;
   }
   if(f.type==='code'){
     const txt=(v===''||v==null)?'—':v;
@@ -705,7 +705,7 @@ function cellHtml(f,r,oi,tbl){
   }
   if(f.type==='date'){
     let cls='c-center';const d=daysUntil(v);if(d!==null&&d<=14)cls+=' warn';
-    return `<td class="${cls}" ${attr}>${escapeHtml(v||'')}</td>`;
+    return `<td class="${cls}" ${attr}><span class="cell-text">${escapeHtml(v||'')}</span></td>`;
   }
   if(f.type==='badge'){
     if(!v)return `<td class="c-center" ${attr}></td>`;
