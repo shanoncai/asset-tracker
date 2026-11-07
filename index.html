@@ -42,9 +42,6 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 .ws-tab{height:36px;padding:0 32px;min-width:130px;font-size:13px;color:var(--color-gray-700);background:transparent;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;}
 .ws-tab:hover{background:var(--color-gray-100);}
 .ws-tab.active{background:#fff;color:var(--color-ink);font-weight:600;border-color:var(--color-border);border-bottom:2px solid var(--color-primary);}
-.ws-tab .ws-edit{opacity:0;color:var(--color-gray-400);font-size:11px;cursor:pointer;}
-.ws-tab:hover .ws-edit,.ws-tab.active .ws-edit{opacity:1;}
-.ws-tab .ws-edit.ws-del-armed{opacity:1 !important;color:#e03131 !important;font-weight:700;}
 .ws-add{height:36px;padding:0 10px;background:transparent;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;white-space:nowrap;}
 .ws-add:hover{color:var(--color-primary-hover);}
 .ws-rename-input{width:96px;height:22px;font-size:13px;padding:0 4px;border:1px solid var(--color-primary);border-radius:4px;outline:none;text-align:center;}
@@ -137,6 +134,16 @@ table.asset tfoot td.num{text-align:center;}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px;}
 .settings-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 14px;}
 .settings-list .btn{width:100%;justify-content:center;height:32px;font-size:12.5px;}
+.settings-divider{height:1px;background:var(--color-border);margin:6px 0 12px;}
+.settings-section-title{font-size:12.5px;color:var(--color-gray-500);font-weight:600;margin-bottom:8px;}
+.ws-del-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:8px;}
+.ws-del-item .name{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ws-del-item .tag{font-size:11px;color:var(--color-gray-400);margin-left:6px;font-weight:400;}
+.ws-del-item .btn-del{height:28px;padding:0 12px;font-size:12px;background:#fff1f0;border:1px solid #ffa8a8;color:#e03131;border-radius:6px;cursor:pointer;white-space:nowrap;}
+.ws-del-item .btn-del:hover{background:#ffe3e3;}
+.ws-del-item .btn-del.armed{background:#e03131;color:#fff;border-color:#e03131;font-weight:700;}
+.ws-del-item.locked{opacity:.7;}
+
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--color-brand-dark);color:#fff;padding:8px 16px;border-radius:8px;font-size:12.5px;z-index:80;opacity:0;transition:.2s;pointer-events:none;bottom:calc(20px + env(safe-area-inset-bottom));}
 .toast.show{opacity:1;}
 
@@ -210,11 +217,11 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="巴奴会员">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIuW3tOWltOS8muWRmCIsICJzaG9ydF9uYW1lIjogIuW3tOWltOS8muWRmCIsICJkZXNjcmlwdGlvbiI6ICLlpJrkvJrlkZjotYTkuqfov73ouKrvvIjnp6/liIYgLyDkubDljZUgLyDmjpLpmJ/liLjvvInlrp7ml7bov73ouKrpnaLmnb8iLCAic3RhcnRfdXJsIjogIi4/dj03OCIsICJzY29wZSI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJvcmllbnRhdGlvbiI6ICJhbnkiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmFmYmZjIiwgInRoZW1lX2NvbG9yIjogIiM2MzViZmYiLCAiaWNvbnMiOiBbeyJzcmMiOiAiaWNvbi5wbmciLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIuW3tOWltOS8muWRmCIsICJzaG9ydF9uYW1lIjogIuW3tOWltOS8muWRmCIsICJkZXNjcmlwdGlvbiI6ICLlpJrkvJrlkZjotYTkuqfov73ouKrvvIjnp6/liIYgLyDkubDljZUgLyDmjpLpmJ/liLjvvInlrp7ml7bov73ouKrpnaLmnb8iLCAic3RhcnRfdXJsIjogIi4/dj03OSIsICJzY29wZSI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJvcmllbnRhdGlvbiI6ICJhbnkiLCAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmFmYmZjIiwgInRoZW1lX2NvbG9yIjogIiM2MzViZmYiLCAiaWNvbnMiOiBbeyJzcmMiOiAiaWNvbi5wbmciLCAic2l6ZXMiOiAiMTgweDE4MCIsICJ0eXBlIjogImltYWdlL3BuZyIsICJwdXJwb3NlIjogImFueSBtYXNrYWJsZSJ9XX0=">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v78</div>
+<div class="ver-tag" id="verTag">v79</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -245,6 +252,9 @@ table.asset.maidan-new .cfg-input{width:58px;}
       <button class="btn btn-secondary" id="btnImport">导入</button>
       <button class="btn btn-secondary" id="btnExport">导出</button>
     </div>
+    <div class="settings-divider"></div>
+    <div class="settings-section-title">删除工作表</div>
+    <div class="settings-list" id="wsDeleteList"></div>
     <div class="modal-actions">
       <button class="btn btn-primary" id="btnSettingsClose">关闭</button>
     </div>
@@ -522,7 +532,7 @@ function renderTabs(){
   const el=document.getElementById('tabs');let h='';
   state.worksheets.forEach(w=>{
     const active=w.id===state.activeWsId?' active':'';
-    h+=`<div class="ws-tab${active}" data-id="${w.id}" title="双击或长按重命名"><span class="ws-name">${escapeHtml(w.name)}</span><span class="ws-edit" data-act="del" data-id="${w.id}">✕</span></div>`;
+    h+=`<div class="ws-tab${active}" data-id="${w.id}" title="双击或长按重命名"><span class="ws-name">${escapeHtml(w.name)}</span></div>`;
   });
   h+=`<button class="ws-add" data-act="add">+ 新建工作表</button>`;
   el.innerHTML=h;
@@ -767,29 +777,9 @@ function startCellEdit(td,i,key,tbl){
 }
 
 // ---- Events ----
-let _armedDelId=null,_armedTimer=null;
 document.getElementById('tabs').addEventListener('click',e=>{
   const act=e.target.dataset.act;const id=e.target.dataset.id;
   if(act==='add'){snapshot();state.worksheets.push({id:uid(),name:'工作表'+(state.worksheets.length+1),sort:{key:null,dir:null},rows:[]});save();renderTabs();renderTable();return;}
-  if(act==='del'){
-    e.preventDefault();
-    if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}
-    const w=state.worksheets.find(x=>x.id===id);if(!w)return;
-    if(_armedDelId!==id){ // 第一次点：仅进入待确认，不直接删除（防误触）
-      if(_armedTimer)clearTimeout(_armedTimer);
-      _armedDelId=id;
-      const span=e.target;span.textContent='确认?';span.classList.add('ws-del-armed');
-      _armedTimer=setTimeout(()=>{_armedDelId=null;renderTabs();},3000);
-      toast('再点一次叉号确认删除「'+w.name+'」');
-      return;
-    }
-    if(_armedTimer)clearTimeout(_armedTimer);_armedDelId=null; // 第二次点：确认删除
-    snapshot();
-    state.worksheets=state.worksheets.filter(x=>x.id!==id);
-    if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;
-    save();renderTabs();renderTable();return;
-  }
-  if(_armedDelId){_armedDelId=null;if(_armedTimer)clearTimeout(_armedTimer);} // 切换标签时取消待删除
   if(e.target.closest('.ws-rename-input'))return;
   if(_justLong){_justLong=false;e.preventDefault();e.stopPropagation();return;}
   const tab=e.target.closest('.ws-tab');if(tab){state.activeWsId=tab.dataset.id;save();renderTabs();renderTable();}
@@ -812,7 +802,7 @@ const _tabsEl=document.getElementById('tabs');
 _tabsEl.addEventListener('dblclick',e=>{const t=e.target.closest('.ws-tab');if(!t)return;const tab=_tabsEl.querySelector('.ws-tab[data-id="'+t.dataset.id+'"]');if(tab)startRename(tab);});
 // 手机触屏长按触发重命名（iOS 触屏 dblclick 不可靠，且 prompt 被禁用）
 let _lpTimer=null;
-_tabsEl.addEventListener('touchstart',e=>{const tab=e.target.closest('.ws-tab');if(!tab||e.target.closest('.ws-edit'))return;_lpTimer=setTimeout(()=>{_lpTimer=null;_justLong=true;if(navigator.vibrate)navigator.vibrate(10);startRename(tab);},500);},{passive:true});
+_tabsEl.addEventListener('touchstart',e=>{const tab=e.target.closest('.ws-tab');if(!tab)return;_lpTimer=setTimeout(()=>{_lpTimer=null;_justLong=true;if(navigator.vibrate)navigator.vibrate(10);startRename(tab);},500);},{passive:true});
 _tabsEl.addEventListener('touchmove',()=>{if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;}},{passive:true});
 _tabsEl.addEventListener('touchend',()=>{if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;}},{passive:true});
 
@@ -995,12 +985,50 @@ function closeFormula(){document.getElementById('formulaModal').classList.remove
 function readVal(f){return document.getElementById('f_'+f.key).value;}
 document.getElementById('btnCancel').addEventListener('click',closeModal);
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
-function openSettings(){document.getElementById('settingsModal').classList.add('open');}
-function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
+function openSettings(){renderWsDeleteList();document.getElementById('settingsModal').classList.add('open');}
+function closeSettings(){if(_wsDelTimer)clearTimeout(_wsDelTimer);_wsDelArmedId=null;document.getElementById('settingsModal').classList.remove('open');}
 document.getElementById('btnSettings').addEventListener('click',openSettings);
 document.getElementById('btnSettingsClose').addEventListener('click',closeSettings);
 document.getElementById('btnFillQueue').addEventListener('click',()=>{fillQueueByRule();});
 document.getElementById('settingsModal').addEventListener('click',e=>{if(e.target.id==='settingsModal')closeSettings();});
+
+// 删除工作表：入口从标签栏移至设置面板（两步确认，避免 iOS 屏蔽原生 confirm）
+let _wsDelArmedId=null,_wsDelTimer=null;
+function isCoreWs(w){return !!(w.fields&&w.fields[0]&&w.fields[0].key==='原价');} // 买单核心表不可删
+function renderWsDeleteList(){
+  const box=document.getElementById('wsDeleteList');if(!box)return;
+  let h='';
+  state.worksheets.forEach(w=>{
+    const core=isCoreWs(w);
+    const tag=core?'<span class="tag">（核心表，不可删）</span>':'';
+    const armed=_wsDelArmedId===w.id;
+    const btn=core?'':`<button class="btn-del${armed?' armed':''}" data-id="${w.id}">${armed?'确认删除?':'删除'}</button>`;
+    h+=`<div class="ws-del-item${core?' locked':''}"><span class="name">${escapeHtml(w.name)}${tag}</span>${btn}</div>`;
+  });
+  box.innerHTML=h;
+}
+document.getElementById('wsDeleteList').addEventListener('click',e=>{
+  const btn=e.target.closest('.btn-del');if(!btn)return;
+  const id=btn.dataset.id;
+  if(_wsDelArmedId!==id){
+    if(_wsDelTimer)clearTimeout(_wsDelTimer);
+    _wsDelArmedId=id;renderWsDeleteList();
+    _wsDelTimer=setTimeout(()=>{_wsDelArmedId=null;renderWsDeleteList();},3000);
+    toast('再点一次「确认删除」完成删除');return;
+  }
+  if(_wsDelTimer)clearTimeout(_wsDelTimer);_wsDelArmedId=null;
+  deleteWorksheet(id);
+});
+function deleteWorksheet(id){
+  if(state.worksheets.length<=1){toast('至少保留一个工作表');return;}
+  const w=state.worksheets.find(x=>x.id===id);if(!w)return;
+  if(isCoreWs(w)){toast('「'+w.name+'」是核心表，不能删除');return;}
+  snapshot();
+  state.worksheets=state.worksheets.filter(x=>x.id!==id);
+  if(state.activeWsId===id)state.activeWsId=state.worksheets[0].id;
+  save();renderTabs();renderTable();renderWsDeleteList();
+  toast('已删除「'+w.name+'」');
+}
 document.getElementById('btnFormulaClose').addEventListener('click',closeFormula);
 document.getElementById('formulaModal').addEventListener('click',e=>{if(e.target.id==='formulaModal')closeFormula();});
 document.getElementById('btnSave').addEventListener('click',()=>{
