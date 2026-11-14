@@ -219,11 +219,11 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="巴奴会员">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY6LWE5Lqn6L+96Liq77yI56ev5YiGIC8g5Lmw5Y2VIC8g5o6S6Zif5Yi477yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLj92PTgzIiwic2NvcGUiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmFmYmZjIiwidGhlbWVfY29sb3IiOiIjNjM1YmZmIiwiaWNvbnMiOlt7InNyYyI6Imljb24ucG5nIiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY6LWE5Lqn6L+96Liq77yI56ev5YiGIC8g5Lmw5Y2VIC8g5o6S6Zif5Yi477yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLj92PTg0Iiwic2NvcGUiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmFmYmZjIiwidGhlbWVfY29sb3IiOiIjNjM1YmZmIiwiaWNvbnMiOlt7InNyYyI6Imljb24ucG5nIiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v83</div>
+<div class="ver-tag" id="verTag">v84</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -561,6 +561,7 @@ function renderTable(){
   const sumBal=rows.reduce((s,r)=>s+(Number(r['余额'])||0),0);
   const sumQueue=rows.reduce((s,r)=>s+(Number(r['排队券'])||0),0);
   const sumBirthday=rows.reduce((s,r)=>s+(Number(r['生日券'])||0),0);
+  const sum85=rows.reduce((s,r)=>s+(Number(r['85券'])||0),0);
   const sumWx=rows.reduce((s,r)=>s+((r['微信']===''||r['微信']==null)?0:1),0);
   const sumShifu=rows.reduce((s,r)=>s+calcMaidan(r).shifu,0);
   const sumFee=rows.reduce((s,r)=>s+calcMaidan(r).fee,0);
@@ -596,6 +597,7 @@ function renderTable(){
       else if(f.key==='积分')foot+=`<td class="num">${sumPoints}</td>`;
       else if(f.key==='余额')foot+=`<td class="num">${fmtMoney(sumBal)}</td>`;
       else if(f.key==='生日券')foot+=`<td class="num">${sumBirthday}</td>`;
+      else if(f.key==='85券')foot+=`<td class="num">${sum85}</td>`;
       else if(f.key==='实付')foot+=`<td class="num">${fmt2(sumShifu)}</td>`;
       else if(f.key==='手续费')foot+=`<td class="num">${fmt2(sumFee)}</td>`;
       else if(f.key==='无手续费')foot+=`<td class="num">${fmtMoney(sumNoFee)}</td>`;
