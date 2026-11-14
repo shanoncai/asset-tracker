@@ -52,6 +52,7 @@ body{margin:0;font-family:var(--font-sans);font-size:13px;line-height:18px;color
 table.asset thead th.col-wx{position:sticky;top:0;left:0;z-index:6;background:var(--color-gray-100) !important;}
 table.asset tbody td.col-wx{position:sticky;left:0;z-index:2;background:var(--color-surface);}
 .asset tbody td.c85-blue{background:#a5d8ff !important;color:#0b4a8a !important;font-weight:600;}
+.asset tbody td.col-wx .cell-text.txt-red{color:#e03131 !important;font-weight:700;}
 table.asset tfoot td.col-wx{position:sticky;left:0;z-index:6;background:var(--color-gray-100) !important;}
 .asset tbody td.col-wx .wx-badge{position:absolute;top:0;right:1px;font-size:9px;line-height:1.1;background:#e8590c;color:#fff;border-radius:8px;padding:1px 4px;font-variant-numeric:tabular-nums;pointer-events:none;z-index:2;white-space:nowrap;}
 .asset thead th.col-login,.asset tbody td.col-login,.asset tfoot td.col-login{min-width:67px !important;padding-left:2px !important;padding-right:2px !important;}
@@ -218,11 +219,11 @@ table.asset.maidan-new .cfg-input{width:58px;}
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="巴奴会员">
-<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY6LWE5Lqn6L+96Liq77yI56ev5YiGIC8g5Lmw5Y2VIC8g5o6S6Zif5Yi477yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLj92PTgyIiwic2NvcGUiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmFmYmZjIiwidGhlbWVfY29sb3IiOiIjNjM1YmZmIiwiaWNvbnMiOlt7InNyYyI6Imljb24ucG5nIiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoi5be05aW05Lya5ZGYIiwic2hvcnRfbmFtZSI6IuW3tOWltOS8muWRmCIsImRlc2NyaXB0aW9uIjoi5aSa5Lya5ZGY6LWE5Lqn6L+96Liq77yI56ev5YiGIC8g5Lmw5Y2VIC8g5o6S6Zif5Yi477yJ5a6e5pe26L+96Liq6Z2i5p2/Iiwic3RhcnRfdXJsIjoiLj92PTgzIiwic2NvcGUiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJvcmllbnRhdGlvbiI6ImFueSIsImJhY2tncm91bmRfY29sb3IiOiIjZmFmYmZjIiwidGhlbWVfY29sb3IiOiIjNjM1YmZmIiwiaWNvbnMiOlt7InNyYyI6Imljb24ucG5nIiwic2l6ZXMiOiIxODB4MTgwIiwidHlwZSI6ImltYWdlL3BuZyIsInB1cnBvc2UiOiJhbnkgbWFza2FibGUifV19">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAC5klEQVR4nO3cQW7bQBAAQSrIL+2b+Swe80/lqnMQizPtqhcQO+31EiL28fXxfB4Q8evuB4D/SdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KYImRdCkCJoUQZMiaFJ+H8tcf+5+gp/n/DzWeGy4TlfEc5zD4x4dtJDnOoeGPfYMLebZrqFHv5FBT10s5s9pXNATF4k98xoV9LTFYd/cxgQ9aVHYO78RQU9ZDPbP8fagJywCnXneHjRkgr77r5neXO3QpAialNuCdtxou246dtihSVn3PXThqzT/nb6PHZoUQZMiaFIETYqgSRE0KYImRdCkCJqUtb8UTr0XovTs18LPe+3QpAiaFEGTImhS1r4Ubnlh8fnoe9mhSRE0KYImRdCkCJoUQZMiaFIETYqgSRE0KWuvAttyx/LmZ7+WXLf2yg5NiqBJETQpgiZl7UvhlhcW90O/lx2aFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTImhSBE2KoEkRNCmCJkXQpAiaFEGTsvYqsC13LG9+9mvJdWuv7NCkCJoUQZMiaFLWvhRueWFxP/R72aFJETQpgiZF0KQImhRBkyJoUgRNiqBJWftL4RZbftGssEOTclvQWz5yZ9d87dCkCJqUW4N27Gg6bzxO2qFJuT1ou3TL+fnDg56wCHTmOCLoKYvB/vmNCXrSorB3bqOCnrY47JvXuKAnLhJ75jQy6KmLxfz5PL4+ns9jOF+szXEODXlV0K/E/X7n8IhXBw0rz9DwLwRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETQpgiZF0KQImhRBkyJoUgRNiqBJETRHyV+2bFUdfdXCgQAAAABJRU5ErkJggg==">
 </head>
 <body>
-<div class="ver-tag" id="verTag">v82</div>
+<div class="ver-tag" id="verTag">v83</div>
 <div class="container">
   <div class="ws-bar" id="tabs"></div>
   <div class="table-wrap" id="tableMount"></div>
@@ -701,9 +702,12 @@ function cellHtml(f,r,oi,tbl){
     const hi=within30&&isMain&&!bvUsedUp; // 生日前30天内(含) + 主卡 + 生日券未标记"已用完(0)"
     const gray=r['等级']!=='肚神';
     const cls=hi?' wx-hi':(gray?' wx-gray':'');
+    const dRenew=daysUntil(r['保级日']);
+    const renewSoon=dRenew!==null&&dRenew>=0&&dRenew<=30; // 保级日前一个月内（含当天）→ 微信文字红色提醒
+    const txtCls=renewSoon?' txt-red':'';
     const txt=(v===''||v==null)?'':escapeHtml(v);
     const badge=(bvNum!==null&&bvNum>0)?`<span class="wx-badge">${escapeHtml(String(bvNum))}</span>`:'';
-    return `<td class="c-center col-wx${cls}" ${attr}><span class="cell-text">${txt}</span>${badge}</td>`;
+    return `<td class="c-center col-wx${cls}" ${attr}><span class="cell-text${txtCls}">${txt}</span>${badge}</td>`;
   }
   if(f.key==='登录'){
     const txt=v?escapeHtml(v):'';
